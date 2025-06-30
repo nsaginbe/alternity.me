@@ -163,7 +163,7 @@ function App() {
           {/* Main heading */}
           <h1 className="text-5xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-gray-800 via-red-700 to-red-600 bg-clip-text text-transparent leading-tight pb-4">
             <span className="inline-flex items-center">
-              Coming Soon <Sparkles className="ml-4 w-12 h-12 text-red-500 animate-pulse" />
+              Coming Soon <Sparkles className="ml-4 w-12 h-12 text-crimson animate-pulse" />
             </span>
           </h1>
 
@@ -171,7 +171,7 @@ function App() {
           <div className="mb-12 pb-4">
             <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Your face holds more than identity. We're here to uncover your alternities.
-              <span className="text-red-600 font-semibold"> Stay tuned.</span>
+              <span className="text-crimson font-semibold"> Stay tuned.</span>
             </p>
           </div>
 
@@ -179,11 +179,11 @@ function App() {
           <div className="mb-12">
             <div className="flex justify-between text-sm text-gray-500 mb-2">
               <span>Development Progress</span>
-              <span className="font-semibold text-red-600">{progress}%</span>
+              <span className="font-semibold text-crimson">{progress}%</span>
             </div>
             <div className="w-full h-3 bg-white/60 rounded-full overflow-hidden shadow-inner">
               <div 
-                className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full transition-all duration-1000 shadow-sm"
+                className="h-full bg-crimson rounded-full transition-all duration-1000 shadow-sm"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -199,14 +199,14 @@ function App() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email for early access"
-                    className="w-full px-6 py-4 bg-white/70 backdrop-blur-sm border border-red-200/50 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 hover:bg-white/90 shadow-sm"
+                    className="w-full px-6 py-4 bg-white/70 backdrop-blur-sm border border-crimson/50 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-crimson focus:border-transparent transition-all duration-300 hover:bg-white/90 shadow-sm"
                     required
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={isSubmitted}
-                  className="px-8 py-4 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed group shadow-lg"
+                  className="px-8 py-4 bg-crimson text-white rounded-xl font-semibold hover:bg-crimson/90 focus:outline-none focus:ring-2 focus:ring-crimson transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed group shadow-lg"
                 >
                   {isSubmitted ? (
                     'Subscribed! ✨'
@@ -231,10 +231,10 @@ function App() {
               <a
                 key={label}
                 href={href}
-                className="group p-3 rounded-xl bg-white/60 backdrop-blur-sm border border-red-200/50 hover:bg-white/80 transition-all duration-300 hover:scale-110 hover:-translate-y-1 shadow-sm"
+                className="group p-3 rounded-xl bg-white/60 backdrop-blur-sm border border-crimson/50 hover:bg-white/80 transition-all duration-300 hover:scale-110 hover:-translate-y-1 shadow-sm"
                 aria-label={label}
               >
-                <Icon className="w-6 h-6 text-gray-600 group-hover:text-red-600 transition-colors duration-300" />
+                <Icon className="w-6 h-6 text-gray-600 group-hover:text-crimson transition-colors duration-300" />
               </a>
             ))}
           </div>
