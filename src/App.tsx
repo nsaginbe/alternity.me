@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Instagram, Linkedin, ArrowRight, Sparkles, Globe } from 'lucide-react';
+import logo from '/src/assets/logo.png';
 
 interface Particle {
   id: number;
@@ -150,7 +151,7 @@ function App() {
       {/* Logo at top */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20 flex justify-center items-center">
         <img
-          src="/src/assets/logo.png"
+          src={logo}
           alt="Logo"
           className="h-10 md:h-14 w-auto object-contain select-none pointer-events-none drop-shadow-lg rounded-xl"
           style={{ maxHeight: '3.5rem' }}
