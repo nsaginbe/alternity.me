@@ -148,13 +148,13 @@ function App() {
       />
 
       {/* Logo at top */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
-        <div className="inline-flex items-center space-x-3 p-4 rounded-2xl bg-white/60 backdrop-blur-sm border border-red-200/50 hover:bg-white/80 transition-all duration-300 hover:scale-105 group cursor-pointer shadow-lg">
-          <Globe className="w-8 h-8 text-red-600 group-hover:rotate-12 transition-transform duration-300" />
-          <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
-            alternity
-          </span>
-        </div>
+      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20 flex justify-center items-center">
+        <img
+          src="/src/assets/logo.png"
+          alt="Logo"
+          className="h-10 md:h-14 w-auto object-contain select-none pointer-events-none drop-shadow-lg rounded-xl"
+          style={{ maxHeight: '3.5rem' }}
+        />
       </div>
 
       {/* Main content */}
