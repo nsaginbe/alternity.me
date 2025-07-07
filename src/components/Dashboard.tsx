@@ -4,6 +4,7 @@ import Webcam from 'react-webcam';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { resizeImageFromDataUrl, dataUrlToFile } from '@/lib/utils';
+import { CelebrityImage, CelebrityImageWithUnsplash, CelebrityImageMultiSource } from './CelebrityImage';
 import { 
   Star, 
   Sparkles, 
@@ -668,16 +669,11 @@ export default function Dashboard() {
                   </div>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 flex items-center justify-center ${
-                    currentMatchIndex % 4 === 0 ? 'bg-gradient-to-br from-green-400 to-green-600' :
-                    currentMatchIndex % 4 === 1 ? 'bg-gradient-to-br from-blue-400 to-blue-600' :
-                    currentMatchIndex % 4 === 2 ? 'bg-gradient-to-br from-purple-400 to-purple-600' :
-                    'bg-gradient-to-br from-pink-400 to-pink-600'
-                  }`}>
-                    <span className="text-6xl font-bold text-white">
-                      {currentMatch.name.split(' ').map(n => n[0]).join('')}
-                    </span>
-                  </div>
+                  <CelebrityImageMultiSource
+                    name={currentMatch.name}
+                    similarity={currentMatch.similarity}
+                    index={currentMatchIndex}
+                  />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{currentMatch.name}</h3>
                   <p className="text-gray-600 text-sm mb-4">Celebrity match</p>
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
