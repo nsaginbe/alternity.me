@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { resizeImageFromDataUrl, dataUrlToFile } from '@/lib/utils';
 import { CelebrityImage, CelebrityImageWithUnsplash, CelebrityImageMultiSource } from './CelebrityImage';
+import { useUser } from '@clerk/clerk-react';
 import { 
   Star, 
   Sparkles, 
@@ -72,6 +73,7 @@ export default function Dashboard() {
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const webcamRef = useRef<Webcam>(null);
+  const { user } = useUser();
 
   // Handle URL parameters for direct section navigation
   useEffect(() => {
@@ -933,13 +935,15 @@ export default function Dashboard() {
         <div className="p-6 border-t border-gray-200">
           {isSidebarOpen ? (
             <>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-crimson to-red-600 rounded-full flex items-center justify-center">
-                  <UserIcon className="w-5 h-5 text-white" />
-                </div>
+              <div className="flex items-center space-x-3 mb-6">
+                <img 
+                  src={user?.imageUrl} 
+                  alt="User" 
+                  className="w-12 h-12 rounded-full border-2 border-white/50"
+                />
                 <div>
-                  <p className="font-semibold text-gray-900">John Doe</p>
-                  <p className="text-sm text-gray-600">john@example.com</p>
+                  <h3 className="font-bold text-lg text-white">{user?.fullName}</h3>
+                  <p className="text-sm text-gray-300">{user?.primaryEmailAddress?.emailAddress}</p>
                 </div>
               </div>
               <Button

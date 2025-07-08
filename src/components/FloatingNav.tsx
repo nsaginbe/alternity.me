@@ -1,22 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, CreditCard, LogIn, UserPlus, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, CreditCard, LogIn, UserPlus } from 'lucide-react';
 import logo from '/src/assets/logo-transparent.png';
+import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/clerk-react';
 
-interface FloatingNavProps {
-  isAuthenticated?: boolean;
-  onSignIn?: () => void;
-  onSignUp?: () => void;
-  onSignOut?: () => void;
-}
-
-export default function FloatingNav({ 
-  isAuthenticated = false, 
-  onSignIn = () => {},
-  onSignUp = () => {},
-  onSignOut = () => {}
-}: FloatingNavProps) {
+export default function FloatingNav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
 
@@ -50,18 +39,6 @@ export default function FloatingNav({
       icon: <CreditCard className="w-4 h-4" />
     }
   ];
-
-  const handleSignInClick = () => {
-    onSignIn();
-  };
-
-  const handleSignUpClick = () => {
-    onSignUp();
-  };
-
-  const handleSignOutClick = () => {
-    onSignOut();
-  };
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
@@ -117,51 +94,34 @@ export default function FloatingNav({
           <div className={`flex items-center flex-shrink-0 transition-all duration-500 ease-out ${
             isScrolled ? 'space-x-2' : 'space-x-3'
           }`}>
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-2 bg-gray-50/50 rounded-xl p-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="transition-all duration-300 ease-out p-2 text-gray-600 hover:text-crimson hover:bg-white/70 rounded-lg"
-                  aria-label="Profile"
-                  tabIndex={0}
-                >
-                  <User className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleSignOutClick}
-                  className="transition-all duration-300 ease-out p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg"
-                  aria-label="Sign Out"
-                  tabIndex={0}
-                >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </div>
-            ) : (
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+            <SignedOut>
               <div className="flex items-center space-x-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleSignInClick}
-                  className="transition-all duration-300 ease-out px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-white/70 border border-transparent hover:border-gray-200 rounded-lg font-medium"
-                  tabIndex={0}
-                >
-                  <LogIn className="w-4 h-4 mr-2" />
-                  <span>Sign In</span>
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleSignUpClick}
-                  className="transition-all duration-300 ease-out px-4 py-2 bg-gradient-to-r from-crimson to-red-600 hover:from-red-700 hover:to-red-700 text-white shadow-md hover:shadow-lg border border-transparent rounded-lg font-medium transform hover:scale-105"
-                  tabIndex={0}
-                >
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  <span>Sign Up</span>
-                </Button>
+                <SignInButton mode="modal">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="transition-all duration-300 ease-out px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-white/70 border border-transparent hover:border-gray-200 rounded-lg font-medium"
+                    tabIndex={0}
+                  >
+                    <LogIn className="w-4 h-4 mr-2" />
+                    <span>Sign In</span>
+                  </Button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <Button
+                    size="sm"
+                    className="transition-all duration-300 ease-out px-4 py-2 bg-gradient-to-r from-crimson to-red-600 hover:from-red-700 hover:to-red-700 text-white shadow-md hover:shadow-lg border border-transparent rounded-lg font-medium transform hover:scale-105"
+                    tabIndex={0}
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    <span>Sign Up</span>
+                  </Button>
+                </SignUpButton>
               </div>
-            )}
+            </SignedOut>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Star, Sparkles, Palette, User, Brain, Camera } from 'lucide-react';
+import { Star, Sparkles, Palette, User} from 'lucide-react';
 import { FeatureBlock } from '../types/landing.types';
 
 export const FEATURE_BLOCKS: FeatureBlock[] = [
@@ -9,12 +9,12 @@ export const FEATURE_BLOCKS: FeatureBlock[] = [
     icon: Star,
     gradient: 'from-purple-400 to-purple-600',
     textColor: 'text-purple-100',
-    size: 'small'
+    size: 'large'
   },
   {
-    id: 'spirit-animal',
+    id: 'animal',
     title: 'SPIRIT ANIMAL',
-    description: 'Discover your core',
+    description: 'Discover your core animal',
     icon: Sparkles,
     gradient: 'from-green-400 to-emerald-600',
     textColor: 'text-green-100',
@@ -23,30 +23,21 @@ export const FEATURE_BLOCKS: FeatureBlock[] = [
   {
     id: 'color',
     title: 'COLOR',
-    description: 'Your signature',
+    description: 'Your color vibe',
     icon: Palette,
     gradient: 'from-rose-400 to-pink-600',
     textColor: 'text-pink-100',
     size: 'small'
   },
   {
-    id: 'personality',
-    title: 'PERSONALITY',
-    description: 'Your vibe type',
+    id: 'gender',
+    title: 'GENDER',
+    description: 'Gender analysis',
     icon: User,
     gradient: 'from-indigo-400 to-purple-600',
     textColor: 'text-indigo-100',
     size: 'medium'
   },
-  {
-    id: 'ai-tech',
-    title: 'AI TECH',
-    description: 'Advanced machine learning',
-    icon: Brain,
-    gradient: 'from-blue-400 to-blue-600',
-    textColor: 'text-blue-100',
-    size: 'large'
-  }
 ];
 
 export const HERO_STATS = {
@@ -58,14 +49,11 @@ export const HERO_STATS = {
 };
 
 export const GRID_LAYOUT_CLASSES = {
-  container: 'grid grid-cols-12 gap-4 h-screen max-h-[800px]',
-  hero: 'col-span-12 lg:col-span-7 row-span-2',
-  aiTech: 'col-span-12 lg:col-span-5 row-span-1',
-  celebrity: 'col-span-6 lg:col-span-2 row-span-1',
-  spiritAnimal: 'col-span-6 lg:col-span-3 row-span-1',
-  color: 'col-span-6 lg:col-span-2 row-span-1',
-  personality: 'col-span-6 lg:col-span-3 row-span-1',
-  getStarted: 'col-span-12 lg:col-span-5 row-span-1'
+  container: 'grid grid-cols-2 gap-4',
+  celebrity: 'col-span-1 row-span-1', // Will need to make this one taller.
+  spiritAnimal: 'col-span-1 row-span-1',
+  personality: 'col-span-1 row-span-1', // gender
+  color: 'col-span-1 row-span-1'
 };
 
 export const ANIMATION_CLASSES = {

@@ -2,12 +2,12 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Users, ArrowRight, Heart, Star, Sparkles, Camera, Zap, Palette, User, Brain } from 'lucide-react';
 import SocialLinks from './SocialLinks';
+import { SignUpButton } from '@clerk/clerk-react';
 
 // Импортируем наши новые компоненты
-import { GridSection, AuthModal } from './landing';
+import { GridSection } from './landing';
 
 // Импортируем хуки и константы
-import { useAuth } from '../hooks/useAuth';
 import { useScrollEffect } from '../hooks/useScrollEffect';
 import { FEATURE_BLOCKS, HERO_STATS } from '../constants/features';
 
@@ -20,68 +20,41 @@ interface FeatureCard {
   textColor: string;
 }
 
-interface ModernLandingProps {
-  onAuthRequired?: () => void;
-}
-
-function ModernLanding({ onAuthRequired }: ModernLandingProps) {
+function ModernLanding() {
   const navigate = useNavigate();
   // Используем наши новые хуки
   const isScrolled = useScrollEffect(50);
-  const {
-    showAuth,
-    isLoading,
-    handleShowAuth,
-    handleCloseAuth,
-    handleToggleAuthMode,
-    handleAuth
-  } = useAuth();
 
   // Map feature IDs to dashboard sections
   const featureToSectionMap: Record<string, string> = {
     'celebrity': 'celebrity',
-    'spirit-animal': 'animal',
+    'animal': 'animal',
     'color': 'color',
-    'personality': 'gender', // Map personality to gender analysis
-    'ai-tech': 'analytics'
+    'gender': 'gender',
   };
 
   // Обработчики для блоков
   const handleFeatureClick = (featureId: string) => {
     console.log(`Feature clicked: ${featureId}`);
     
-    // If user needs auth, trigger auth modal
-    if (onAuthRequired) {
-      onAuthRequired();
-      return;
-    }
-
-    // Map feature to dashboard section and navigate
+    // For now, we just navigate to the dashboard with the section
+    // The route will be protected by Clerk
     const dashboardSection = featureToSectionMap[featureId];
     if (dashboardSection) {
       navigate(`/dashboard?section=${dashboardSection}`);
-    } else {
-      // Fallback to auth for unmapped features
-      handleShowAuth('signup');
-    }
-  };
-
-  const handleGetStarted = () => {
-    if (onAuthRequired) {
-      onAuthRequired();
     } else {
       navigate('/dashboard');
     }
   };
 
+  const handleGetStarted = () => {
+    navigate('/dashboard');
+  };
+
   // Update feature card click handlers
   const handleFeatureCardClick = (featureTitle: string) => {
-    if (onAuthRequired) {
-      onAuthRequired();
-      return;
-    }
-
-    // Map feature card titles to dashboard sections
+    // For now, we just navigate to the dashboard with the section
+    // The route will be protected by Clerk
     switch (featureTitle) {
       case 'CELEBRITY':
         navigate('/dashboard?section=celebrity');
@@ -215,12 +188,13 @@ function ModernLanding({ onAuthRequired }: ModernLandingProps) {
                   <p className="text-purple-100 text-sm mb-4">
                     Connect with others who found their amazing matches
                   </p>
-                  <button 
-                    onClick={() => onAuthRequired ? onAuthRequired() : handleShowAuth('signup')}
-                    className="w-full bg-white text-purple-600 font-bold py-3 rounded-xl hover:bg-gray-100 transition-colors"
-                  >
-                    GET STARTED
-                  </button>
+                  <SignUpButton mode="modal">
+                    <button 
+                      className="w-full bg-white text-purple-600 font-bold py-3 rounded-xl hover:bg-gray-100 transition-colors"
+                    >
+                      GET STARTED
+                    </button>
+                  </SignUpButton>
                 </div>
               </div>
             </div>
@@ -274,7 +248,7 @@ function ModernLanding({ onAuthRequired }: ModernLandingProps) {
               Join thousands of users who discovered their celebrity twins, spirit animals, and more
             </p>
             <button 
-              onClick={() => onAuthRequired ? onAuthRequired() : handleShowAuth('signup')}
+              onClick={() => navigate('/dashboard')}
               className="inline-flex items-center px-8 py-4 bg-white text-crimson font-bold rounded-full text-lg hover:shadow-xl transition-shadow duration-200"
             >
               START NOW - IT'S FREE
@@ -319,7 +293,7 @@ function ModernLanding({ onAuthRequired }: ModernLandingProps) {
                   </button>
                 </div>
                 
-                <SocialLinks className="mb-4 md:mb-0" />
+                <SocialLinks />
               </div>
             </div>
             
@@ -329,15 +303,7 @@ function ModernLanding({ onAuthRequired }: ModernLandingProps) {
           </div>
         </footer>
 
-        {/* Authentication Modal */}
-        <AuthModal
-          isOpen={showAuth !== null}
-          mode={showAuth || 'signin'}
-          onClose={handleCloseAuth}
-          onSubmit={handleAuth}
-          onToggleMode={handleToggleAuthMode}
-          isLoading={isLoading}
-        />
+        {/* Auth Modal is no longer needed here */}
       </div>
     </>
   );
