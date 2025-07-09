@@ -9,7 +9,8 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   const IconComponent = feature.icon;
 
   return (
-    <div className={`${className}`}>
+    <div className={`${className} group relative overflow-hidden`}>
+      <div className="shine-effect"></div>
       <div 
         className={`bg-gradient-to-br ${feature.gradient} text-white p-4 ${ANIMATION_CLASSES.card} ${ANIMATION_CLASSES.hover}`}
         onClick={feature.onClick}

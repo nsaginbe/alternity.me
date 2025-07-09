@@ -9,4 +9,9 @@ export interface FeatureBlock {
   textColor: string;
   size: 'small' | 'medium' | 'large';
   onClick?: () => void;
+}
+
+export interface FeatureCardProps {
+  feature: FeatureBlock;
+  className?: string;
 } 

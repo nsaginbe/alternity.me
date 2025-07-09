@@ -106,6 +106,42 @@ function ModernLanding() {
     <>
       <style>
         {`
+          .shine-effect {
+            --shine-angle: 0deg;
+            --shine-color: #ffffff33;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: conic-gradient(
+              from var(--shine-angle),
+              #ffffff00,
+              var(--shine-color),
+              #ffffff00 30%
+            );
+            opacity: 0;
+            mix-blend-mode: screen;
+          }
+
+          .group:hover .shine-effect {
+            animation: shine 0.75s ease-out;
+          }
+
+          @keyframes shine {
+            0% {
+              opacity: 0;
+              transform: translateX(-100%) rotate(20deg);
+            }
+            20% {
+              opacity: 1;
+            }
+            100% {
+              opacity: 0;
+              transform: translateX(100%) rotate(-20deg);
+            }
+          }
+
           input[type="password"]::-ms-reveal,
           input[type="password"]::-ms-clear,
           input[type="password"]::-webkit-credentials-auto-fill-button {
@@ -152,7 +188,7 @@ function ModernLanding() {
                     >
                       <div className="shine-effect"></div>
                       <div className="flex items-center space-x-4">
-                        <div className={`w-14 h-14 bg-gradient-to-r ${feature.gradient} rounded-full flex items-center justify-center text-white transition-transform duration-200`}>
+                        <div className={`w-14 h-14 bg-gradient-to-r ${feature.gradient} rounded-full flex items-center justify-center text-white transition-transform duration-200 group-hover:scale-105`}>
                           {feature.icon}
                         </div>
                         <div>
@@ -163,7 +199,7 @@ function ModernLanding() {
                       
                       <div className="flex items-center space-x-3">
                         <span className="font-bold text-gray-900">{feature.price}</span>
-                        <button className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white hover:bg-green-700 transition-colors transform duration-200">
+                        <button className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white hover:bg-green-700 transition-colors duration-200">
                           <ArrowRight className="w-5 h-5" />
                         </button>
                       </div>

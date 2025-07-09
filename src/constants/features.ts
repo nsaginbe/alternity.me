@@ -57,7 +57,7 @@ export const GRID_LAYOUT_CLASSES = {
 };
 
 export const ANIMATION_CLASSES = {
-  hover: 'group hover:scale-[1.02] transition-transform duration-300 cursor-pointer',
+  hover: 'group transition-transform duration-300 cursor-pointer',
   card: 'rounded-3xl h-full relative overflow-hidden',
   iconContainer: 'w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-3',
   button: 'bg-white/20 rounded-full px-4 py-2'

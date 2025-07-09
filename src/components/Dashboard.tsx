@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -853,14 +853,17 @@ export default function Dashboard() {
               )}
             </div>
           {isSidebarOpen && (
-              <Button
-                variant="ghost"
-                onClick={() => signOut({ redirectUrl: '/' })}
-                className="w-full justify-start text-gray-500 hover:text-red-600 hover:bg-red-50 mt-4"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
+            <div className="mt-4">
+              <Link to="/">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-gray-500 hover:text-red-600 hover:bg-red-50"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  Back to Home
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
       </aside>
