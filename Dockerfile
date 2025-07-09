@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Stage 1: Build the React application
 FROM node:18-alpine AS build
 
@@ -14,7 +15,8 @@ RUN npm install
 COPY . .
 
 # Build the application for production
-RUN npm run build
+# Use BuildKit secret mounting to securely access the .env file
+RUN --mount=type=secret,id=dotenv,target=/app/.env npm run build
 
 # Stage 2: Serve the application using Nginx
 FROM nginx:1.25-alpine
