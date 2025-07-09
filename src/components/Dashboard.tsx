@@ -138,11 +138,12 @@ export default function Dashboard() {
 
   // Call celebrity lookalike API
   const findCelebLookalike = async (base64ImageData: string): Promise<ApiResponse> => {
-    console.log('🚀 Starting API call to localhost:5000/find');
+    const apiUrl = import.meta.env.VITE_BACK_API_URL || 'http://localhost:5000';
+    console.log(`🚀 Starting API call to ${apiUrl}/find`);
     console.log('📦 Base64 data length:', base64ImageData.length);
 
     try {
-      const response = await fetch('http://localhost:5000/find', {
+      const response = await fetch(`${apiUrl}/find`, {
         method: 'POST',
         headers: {
           'Content-Type': 'image/jpeg'
@@ -180,7 +181,7 @@ export default function Dashboard() {
     } catch (error) {
       if (error instanceof TypeError && error.message.includes('fetch')) {
         console.error('❌ Network error - API server may not be running');
-        throw new Error('Cannot connect to API server. Please ensure the backend is running on localhost:5000');
+        throw new Error(`Cannot connect to API server. Please ensure the backend is running on ${apiUrl}`);
       }
       throw error;
     }
