@@ -1,3 +1,5 @@
 // Экспорт всех компонентов landing
-export { FeatureCard } from "./FeatureCard";
-export { GridSection } from "./GridSection"; 
+export * from './FeatureCard';
+export * from './GridSection';
+export * from './AnimatedHeader';
+export * from './HowItWorks'; 

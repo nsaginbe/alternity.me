@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { LayoutDashboard, CreditCard, LogIn, UserPlus } from 'lucide-react';
-import logo from '/src/assets/logo-transparent.png';
+import logo from '/src/assets/logo-only-transparent.png';
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/clerk-react';
 
 export default function FloatingNav() {
@@ -45,7 +45,7 @@ export default function FloatingNav() {
       isScrolled ? 'py-3 px-4' : 'py-4 px-6'
     }`}>
       <div className={`mx-auto transition-all duration-500 ease-out ${
-        isScrolled ? 'max-w-4xl' : 'max-w-7xl'
+        isScrolled ? 'max-w-3xl' : 'max-w-6xl'
       }`}>
         <div className={`flex justify-between items-center transition-all duration-500 ease-out ${
           isScrolled 
@@ -54,21 +54,24 @@ export default function FloatingNav() {
         }`}>
           
           {/* Logo */}
-          <Link to="/" className="flex items-center flex-shrink-0 group">
+          <Link to="/" className="flex items-center space-x-2 flex-shrink-0 group">
             <img
               src={logo}
               alt="Alternity Logo"
-              className={`rounded-lg transition-all duration-500 ease-out object-contain group-hover:scale-105 ${
-                isScrolled ? 'h-12 w-12' : 'h-16 w-16'
+              className={`transition-all duration-500 ease-out object-contain group-hover:scale-105 ${
+                isScrolled ? 'h-7 w-7' : 'h-7 w-7'
               }`}
             />
+            <span className="font-medium text-gray-800 text-lg">
+              alternity
+            </span>
           </Link>
 
           {/* Center Navigation */}
           <nav className={`flex items-center justify-center flex-1 transition-all duration-500 ease-out ${
             isScrolled ? 'mx-6' : 'mx-8'
           }`}>
-            <div className={`flex items-center bg-gray-50/50 rounded-xl p-1 transition-all duration-500 ease-out ${
+            <div className={`flex items-center transition-all duration-500 ease-out ${
               isScrolled ? 'space-x-1' : 'space-x-2'
             }`}>
               {navItems.map((item) => (
@@ -76,14 +79,14 @@ export default function FloatingNav() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`transition-all duration-300 ease-out px-4 py-2 rounded-lg font-medium ${
+                    className={`transition-all duration-300 ease-out px-4 py-2 rounded-lg font-semibold border ${
                       location.pathname === item.href 
-                        ? 'bg-gradient-to-r from-crimson to-red-600 text-white shadow-md hover:shadow-lg transform hover:scale-105' 
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/70 hover:shadow-sm'
+                        ? 'bg-red-50 text-red-600 border-red-200' 
+                        : 'text-gray-600 border-transparent hover:text-red-600 hover:bg-red-50 hover:border-red-200'
                     }`}
                   >
                     {item.icon}
-                    <span className="ml-2 font-semibold">{item.name}</span>
+                    <span className="ml-2">{item.name}</span>
                   </Button>
                 </Link>
               ))}
@@ -95,7 +98,9 @@ export default function FloatingNav() {
             isScrolled ? 'space-x-2' : 'space-x-3'
           }`}>
             <SignedIn>
-              <UserButton afterSignOutUrl="/" />
+              <div className="transform scale-120">
+                <UserButton afterSignOutUrl="/" />
+              </div>
             </SignedIn>
             <SignedOut>
               <div className="flex items-center space-x-2">
@@ -103,7 +108,7 @@ export default function FloatingNav() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="transition-all duration-300 ease-out px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-white/70 border border-transparent hover:border-gray-200 rounded-lg font-medium"
+                    className="transition-all duration-300 ease-out px-4 py-2 text-gray-700 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg font-semibold"
                     tabIndex={0}
                   >
                     <LogIn className="w-4 h-4 mr-2" />
@@ -113,7 +118,7 @@ export default function FloatingNav() {
                 <SignUpButton mode="modal">
                   <Button
                     size="sm"
-                    className="transition-all duration-300 ease-out px-4 py-2 bg-gradient-to-r from-crimson to-red-600 hover:from-red-700 hover:to-red-700 text-white shadow-md hover:shadow-lg border border-transparent rounded-lg font-medium transform hover:scale-105"
+                    className="transition-all duration-300 ease-out px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-md hover:shadow-lg border border-transparent rounded-lg font-semibold transform hover:scale-105"
                     tabIndex={0}
                   >
                     <UserPlus className="w-4 h-4 mr-2" />

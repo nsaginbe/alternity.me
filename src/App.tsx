@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/clerk-react';
+import { SignedIn, SignedOut } from '@clerk/clerk-react';
 import ComingSoon from './components/ComingSoon';
 import ModernLanding from './components/ModernLanding';
 import FloatingNav from './components/FloatingNav';
 import Dashboard from './components/Dashboard';
 import Pricing from './components/Pricing';
 import React from 'react';
+import SignInModalTrigger from './components/SignInModalTrigger';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -25,9 +26,14 @@ function AppContent() {
           <Route
             path="/dashboard"
             element={
-              <SignedIn>
-                <Dashboard />
-              </SignedIn>
+              <>
+                <SignedIn>
+                  <Dashboard />
+                </SignedIn>
+                <SignedOut>
+                  <SignInModalTrigger />
+                </SignedOut>
+              </>
             }
           />
         </Routes>
@@ -35,7 +41,6 @@ function AppContent() {
     </div>
   );
 }
-
 
 function App() {
   return (

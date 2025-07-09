@@ -5,14 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { resizeImageFromDataUrl, dataUrlToFile } from '@/lib/utils';
 import { CelebrityImage, CelebrityImageWithUnsplash, CelebrityImageMultiSource } from './CelebrityImage';
-import { useUser } from '@clerk/clerk-react';
-import { 
-  Star, 
-  Sparkles, 
-  Palette, 
-  User as UserIcon, 
-  Upload, 
-  Camera, 
+import { useUser, useClerk } from '@clerk/clerk-react';
+import toast from 'react-hot-toast';
+import {
+  Star,
+  Sparkles,
+  Palette,
+  User as UserIcon,
+  Upload,
+  Camera,
   BarChart3,
   Heart,
   Eye,
@@ -24,8 +25,15 @@ import {
   ChevronRight,
   X,
   Menu,
-  MenuIcon
+  MenuIcon,
+  RefreshCw,
+  Check,
+  Sun,
+  Users,
+  FileImage,
 } from 'lucide-react';
+import { CelebrityMatchCard } from './CelebrityMatchCard';
+import logoOnly from '/src/assets/logo-only-transparent.png';
 
 type DashboardSection = 'celebrity' | 'animal' | 'color' | 'gender' | 'analytics' | 'settings';
 
@@ -43,7 +51,7 @@ const DevelopmentBadge = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="relative">
       {children}
-      
+
       {/* Small development badge in top-right corner */}
       <div className="absolute top-4 right-4 z-10">
         <div className="bg-amber-100 border border-amber-300 rounded-full px-3 py-1 shadow-sm">
@@ -69,11 +77,12 @@ export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Closed by default for mobile
   const [celebrityMatches, setCelebrityMatches] = useState<CelebrityMatch[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null); // This will be removed
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const webcamRef = useRef<Webcam>(null);
   const { user } = useUser();
+  const { signOut } = useClerk();
 
   // Handle URL parameters for direct section navigation
   useEffect(() => {
@@ -108,12 +117,12 @@ export default function Dashboard() {
         fileSize: file.size,
         fileType: file.type
       });
-      
+
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
         console.log('✅ FileReader loaded, data URL length:', result.length);
-        
+
         // Remove the data URL prefix (data:image/jpeg;base64,)
         const base64Data = result.split(',')[1];
         console.log('✅ Base64 data extracted, length:', base64Data.length);
@@ -131,7 +140,7 @@ export default function Dashboard() {
   const findCelebLookalike = async (base64ImageData: string): Promise<ApiResponse> => {
     console.log('🚀 Starting API call to localhost:5000/find');
     console.log('📦 Base64 data length:', base64ImageData.length);
-    
+
     try {
       const response = await fetch('http://localhost:5000/find', {
         method: 'POST',
@@ -147,7 +156,7 @@ export default function Dashboard() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ API Error response:', errorText);
-        
+
         switch (response.status) {
           case 400:
             throw new Error('Invalid image format. Please upload a valid image.');
@@ -160,7 +169,7 @@ export default function Dashboard() {
 
       const data = await response.json();
       console.log('✅ API Response data:', data);
-      
+
       // Handle empty response (no face detected)
       if (Array.isArray(data) && data.length === 0) {
         console.log('⚠️ Empty response from API - no face detected');
@@ -198,56 +207,53 @@ export default function Dashboard() {
   }, [uploadMode]);
 
   // Webcam capture using react-webcam Hook pattern
-  const capture = useCallback(async () => {
+  const handleCapture = useCallback(async () => {
     console.log('📷 Capturing photo with react-webcam...');
-    
     if (!webcamRef.current) {
-      console.error('❌ Webcam ref not available');
-      setApiError('Camera not available. Please try again.');
+      toast.error('Camera not available. Please try again.');
+      return;
+    }
+
+    const imageSrc = webcamRef.current.getScreenshot();
+    if (!imageSrc) {
+      toast.error('Failed to capture photo. Please try again.');
+      return;
+    }
+
+    console.log('✅ Screenshot captured, resizing...');
+    const resizedImage = await resizeImageFromDataUrl(imageSrc, 512, 0.9);
+    setCapturedImage(resizedImage);
+  }, [webcamRef]);
+
+  const handleAnalyzeCapturedPhoto = async () => {
+    if (!capturedImage) {
+      toast.error('Please capture a photo first.');
       return;
     }
 
     try {
       setIsProcessing(true);
-      setApiError(null);
 
-      // Get screenshot from webcam
-      const imageSrc = webcamRef.current.getScreenshot();
-      
-      if (!imageSrc) {
-        console.error('❌ Failed to capture screenshot');
-        setApiError('Failed to capture photo. Please try again.');
-        return;
-      }
-
-      console.log('✅ Screenshot captured, resizing...');
-      
-      // Resize image for optimization
-      const resizedImage = await resizeImageFromDataUrl(imageSrc, 512, 0.9);
-      setCapturedImage(resizedImage);
-      
-      // Convert to File for API processing
-      const capturedFile = dataUrlToFile(resizedImage, 'webcam-capture.jpg');
+      const capturedFile = dataUrlToFile(capturedImage, 'webcam-capture.jpg');
       setUploadedFile(capturedFile);
-      
+
       console.log('🔄 Processing captured image...');
-      
-      // Process the captured image immediately
+
       const base64Data = await convertImageToBase64(capturedFile);
       const matches = await findCelebLookalike(base64Data);
       setCelebrityMatches(matches);
       setCurrentMatchIndex(0);
       setUploadMode('results');
-      
+
       console.log('✅ Webcam capture and processing completed!');
     } catch (error) {
       console.error('❌ Error processing webcam image:', error);
-      setApiError(error instanceof Error ? error.message : 'Failed to process image. Please try again.');
-      setUploadMode('upload'); // Go back to upload mode on error
+      toast.error(error instanceof Error ? error.message : 'Failed to process image. Please try again.');
+      setUploadMode('upload');
     } finally {
       setIsProcessing(false);
     }
-  }, []);
+  };
 
   const sidebarItems = [
     { id: 'celebrity', label: 'Celebrity Match', icon: Star, color: 'text-yellow-600' },
@@ -276,19 +282,19 @@ export default function Dashboard() {
   const handleFileSelect = (files: FileList | null) => {
     if (files && files[0]) {
       const file = files[0];
-      
+
       // Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
-      
+
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
         alert('File size must be less than 5MB');
         return;
       }
-      
+
       setUploadedFile(file);
     }
   };
@@ -297,24 +303,23 @@ export default function Dashboard() {
     if (uploadedFile) {
       console.log('📁 Starting photo upload and processing...', uploadedFile.name);
       setIsProcessing(true);
-      setApiError(null);
-      
+
       try {
         console.log('🔄 Step 1: Converting to base64...');
         const base64Data = await convertImageToBase64(uploadedFile);
-        
+
         console.log('🔄 Step 2: Calling Celebrity Match API...');
         const matches = await findCelebLookalike(base64Data);
-        
+
         console.log('🔄 Step 3: Processing results...');
         setCelebrityMatches(matches);
         setCurrentMatchIndex(0);
         setUploadMode('results');
-        
+
         console.log('✅ Celebrity match completed successfully!');
       } catch (error) {
         console.error('❌ Error processing image:', error);
-        setApiError(error instanceof Error ? error.message : 'Failed to process image. Please try again.');
+        toast.error(error instanceof Error ? error.message : 'Failed to process image. Please try again.');
       } finally {
         setIsProcessing(false);
       }
@@ -349,137 +354,151 @@ export default function Dashboard() {
 
   const handleUseWebcam = () => {
     setUploadMode('webcam');
-    setApiError(null);
     setCapturedImage(null);
   };
 
   const handleCapturePhoto = () => {
-    console.log('🎥 Capture photo button clicked');
-    capture();
+    // This function is now deprecated in favor of handleCapture and handleAnalyzeCapturedPhoto
+    // It can be removed if no longer referenced elsewhere, but we keep it for now.
+    handleCapture();
   };
 
   const renderCelebritySection = () => {
     if (uploadMode === 'upload') {
       return (
         <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Celebrity Match</h2>
-            <p className="text-gray-600">Upload your photo to find your celebrity doppelganger</p>
-            <div className="mt-4 p-4 bg-purple-50 rounded-lg">
-              <h4 className="font-semibold text-purple-900 mb-2">For best results:</h4>
-              <ul className="text-sm text-purple-800 space-y-1">
-                <li>• Upload a clear, high-quality photo</li>
-                <li>• Face should be well-lit and facing forward</li>
-                <li>• Avoid group photos - single person works best</li>
-                <li>• Supported formats: JPG, PNG, WebP (Max 5MB)</li>
-              </ul>
-            </div>
+          {/* Main Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
+              Find Your Celebrity Twin
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Ever wondered which celebrity you resemble? Upload your photo and find out!
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <Button
-              onClick={handleUploadPhoto}
-              disabled={isProcessing}
-              className="h-20 bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-semibold rounded-2xl disabled:opacity-50"
-            >
-              {isProcessing ? (
-                <>
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <Upload className="w-6 h-6 mr-3" />
-                  Upload photo
-                </>
-              )}
-            </Button>
-            <Button
-              onClick={handleUseWebcam}
-              disabled={isProcessing}
-              variant="outline"
-              className="h-20 border-2 border-gray-300 hover:border-purple-500 hover:text-purple-600 text-lg font-semibold rounded-2xl disabled:opacity-50"
-            >
-              <Camera className="w-6 h-6 mr-3" />
-              Use webcam
-            </Button>
-          </div>
+          {/* Main Upload Component */}
+          <Card
+            className={`w-full transition-all duration-300 ${
+              isDragging ? 'border-violet-500 shadow-2xl scale-105' : 'border-gray-200 shadow-lg'
+            }`}
+          >
+            <CardContent className="p-0">
+              <div
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                className="grid grid-cols-1 lg:grid-cols-2 min-h-[450px]"
+              >
+                {/* Left side - Upload Instructions & Preview */}
+                <div className="p-8 flex flex-col items-center justify-center text-center bg-gray-50/50 rounded-l-lg">
+                  {previewUrl ? (
+                    <div className="relative w-full max-w-xs">
+                      <img
+                        src={previewUrl}
+                        alt="Your Upload"
+                        className="w-full h-auto object-cover rounded-xl shadow-md mb-4"
+                      />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveFile();
+                        }}
+                        className="absolute -top-3 -right-3 w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-transform hover:scale-110 shadow-lg border-2 border-white"
+                        aria-label="Remove photo"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                      <h3 className="text-xl font-semibold text-gray-800">
+                        {uploadedFile?.name || 'Your Photo'}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {uploadedFile ? `${(uploadedFile.size / 1024 / 1024).toFixed(2)} MB` : ''}
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="w-24 h-24 bg-violet-100 rounded-full flex items-center justify-center mb-6 border-4 border-violet-200">
+                        <Upload className="w-12 h-12 text-violet-500" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                        {isDragging ? "Drop it like it's hot!" : "Upload Your Photo"}
+                      </h3>
+                      <p className="text-gray-600">
+                        Drag & drop a file or click to select
+                      </p>
+                    </>
+                  )}
+                </div>
 
-          {/* Error Display */}
-          {apiError && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-center">
-                <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center mr-3">
-                  <X className="w-3 h-3 text-white" />
+                {/* Right side - Actions & Guidelines */}
+                <div className="p-8 flex flex-col justify-center bg-white rounded-r-lg">
+                  {/* Action Buttons */}
+                  <div className="w-full space-y-4 mb-8">
+                    <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full h-16 bg-violet-600 hover:bg-violet-700 text-white text-lg font-semibold rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1"
+                      disabled={isProcessing}
+                    >
+                      <Upload className="w-6 h-6 mr-3" />
+                      Choose Photo
+                    </Button>
+                    <Button
+                      onClick={handleUseWebcam}
+                      className="w-full h-16 border-2 border-gray-300 bg-white hover:bg-gray-100 hover:border-violet-400 text-gray-700 hover:text-violet-600 text-lg font-semibold rounded-xl transition-all"
+                      disabled={isProcessing}
+                    >
+                      <Camera className="w-6 h-6 mr-3" />
+                      Use Webcam
+                    </Button>
+                  </div>
+
+                  {/* Guidelines */}
+                  <div className="p-6 bg-violet-100 rounded-xl border border-violet-200">
+                    <h4 className="font-bold text-violet-900 mb-3 text-lg">For Best Results:</h4>
+                    <ul className="text-base text-violet-700 space-y-3">
+                      <li className="flex items-center"><Check className="w-5 h-5 mr-3 text-green-500 flex-shrink-0" /> Clear, forward-facing photo</li>
+                      <li className="flex items-center"><Sun className="w-5 h-5 mr-3 text-yellow-500 flex-shrink-0" /> Good, even lighting</li>
+                      <li className="flex items-center"><Users className="w-5 h-5 mr-3 text-red-500 flex-shrink-0" /> Avoid group photos</li>
+                      <li className="flex items-center"><FileImage className="w-5 h-5 mr-3 text-blue-500 flex-shrink-0" /> JPG, PNG, WebP (Max 5MB)</li>
+                    </ul>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-red-800 font-semibold">Error</h4>
-                  <p className="text-red-600 text-sm">{apiError}</p>
-                </div>
-                <button
-                  onClick={() => setApiError(null)}
-                  className="ml-auto text-red-500 hover:text-red-700"
-                >
-                  <X className="w-4 h-4" />
-                </button>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Floating Upload Button */}
+          {uploadedFile && (
+            <div className="mt-8 text-center">
+              <Button
+                onClick={handleUploadPhoto}
+                disabled={isProcessing}
+                className="h-16 px-12 bg-emerald-600 hover:bg-emerald-700 text-white text-xl font-bold rounded-2xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:scale-100"
+              >
+                {isProcessing ? (
+                  <>
+                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-6 h-6 mr-3" />
+                    Find Your Twin!
+                  </>
+                )}
+              </Button>
             </div>
           )}
 
-          <div 
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-3xl p-16 text-center cursor-pointer transition-all duration-200 ${
-              isDragging 
-                ? 'border-emerald-500 bg-emerald-50' 
-                : uploadedFile 
-                  ? 'border-emerald-300 bg-emerald-50' 
-                  : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
-            }`}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleFileSelect(e.target.files)}
-              className="hidden"
-            />
-            
-            {previewUrl ? (
-              <div className="relative">
-                <img 
-                  src={previewUrl} 
-                  alt="Preview" 
-                  className="w-40 h-40 object-cover rounded-xl mx-auto mb-4"
-                />
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveFile();
-                  }}
-                  className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Photo Ready!</h3>
-                <p className="text-emerald-600 mb-4">Click "Upload photo" to analyze</p>
-                <p className="text-sm text-gray-500">{uploadedFile?.name}</p>
-              </div>
-            ) : (
-              <>
-                <div className="w-20 h-20 bg-gray-200 rounded-xl mx-auto mb-6 flex items-center justify-center">
-                  <Upload className="w-10 h-10 text-gray-400" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {isDragging ? 'Drop your photo here' : 'Upload your photo'}
-                </h3>
-                <p className="text-gray-600 mb-4">Drag and drop or click to select</p>
-                <p className="text-sm text-gray-500">Supports JPG, PNG, WebP (Max 5MB)</p>
-              </>
-            )}
-          </div>
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => handleFileSelect(e.target.files)}
+            className="hidden"
+          />
         </div>
       );
     }
@@ -487,40 +506,44 @@ export default function Dashboard() {
     if (uploadMode === 'webcam') {
       return (
         <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
+          <div className="mb-8 text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Use Webcam</h2>
             <p className="text-gray-600">Position yourself in the frame and capture your photo</p>
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-semibold text-blue-900 mb-2">Tips for better results:</h4>
-              <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Ensure good lighting on your face</li>
-                <li>• Look directly at the camera</li>
-                <li>• Remove sunglasses or hat if possible</li>
-                <li>• Make sure your face is clearly visible</li>
-              </ul>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <Button
-              onClick={() => setUploadMode('upload')}
+              onClick={() => {
+                setUploadMode('upload');
+                handleRemoveFile(); // Clear any previous selection
+              }}
               variant="outline"
-              className="h-20 border-2 border-gray-300 text-lg font-semibold rounded-2xl"
+              className="h-20 border-2 border-gray-300 hover:border-violet-500 hover:text-violet-600 text-lg font-semibold rounded-2xl"
             >
-              <Upload className="w-6 h-6 mr-3" />
-              Upload photo
+              <ChevronLeft className="w-6 h-6 mr-3" />
+              Back to Upload
             </Button>
             <Button
-              onClick={() => setUploadMode('upload')}
-              className="h-20 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-2xl"
+              onClick={handleAnalyzeCapturedPhoto}
+              disabled={isProcessing || !capturedImage}
+              className="h-20 bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-semibold rounded-2xl disabled:opacity-50"
             >
-              <Camera className="w-6 h-6 mr-3" />
-              Back to upload
+              {isProcessing ? (
+                <>
+                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-6 h-6 mr-3" />
+                  Analyze Photo
+                </>
+              )}
             </Button>
           </div>
 
           {/* React Webcam Component */}
-          <div className="bg-black rounded-3xl aspect-video mb-6 relative overflow-hidden">
+          <div className="bg-black rounded-3xl aspect-video mb-6 relative overflow-hidden shadow-lg">
             <Webcam
               ref={webcamRef}
               audio={false}
@@ -534,66 +557,56 @@ export default function Dashboard() {
               }}
               className="w-full h-full object-cover"
             />
-            
+
             {/* Webcam Active Indicator */}
-            <div className="absolute top-4 left-4">
-              <div className="flex items-center space-x-2 bg-green-500 text-white px-3 py-1 rounded-full text-sm">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <span>Camera Active</span>
+            {!capturedImage && (
+              <div className="absolute top-4 left-4">
+                <div className="flex items-center space-x-2 bg-green-500 text-white px-3 py-1 rounded-full text-sm">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  <span>Camera Active</span>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Capture Preview */}
             {capturedImage && (
               <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <img 
-                    src={capturedImage} 
-                    alt="Captured" 
-                    className="max-w-xs max-h-60 rounded-lg"
-                  />
-                  <p className="text-white">Photo captured! Processing...</p>
-                </div>
+                <img
+                  src={capturedImage}
+                  alt="Captured"
+                  className="max-w-xl max-h-[400px] rounded-lg shadow-2xl"
+                />
               </div>
             )}
           </div>
 
-          <div className="text-center space-y-4">
-            <div className="space-y-3">
-              <Button
-                onClick={handleCapturePhoto}
-                disabled={isProcessing}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold disabled:opacity-50"
-              >
-                {isProcessing ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Camera className="w-5 h-5 mr-2" />
-                    Capture photo
-                  </>
-                )}
+          <div className="mt-8 text-center">
+            {!capturedImage ? (
+              <Button onClick={handleCapture} disabled={isProcessing} size="lg" className="bg-purple-600 hover:bg-purple-700">
+                <Camera className="w-6 h-6 mr-2" />
+                Capture Photo
               </Button>
-              <div className="text-xs text-gray-500">
-                Camera is ready • Click to take photo and analyze
+            ) : (
+              <div className="flex justify-center gap-4">
+                  <Button onClick={() => setCapturedImage(null)} variant="outline" size="lg">
+                      <RefreshCw className="w-6 h-6 mr-2" />
+                      Retake
+                  </Button>
               </div>
-            </div>
+            )}
           </div>
         </div>
       );
     }
 
     const currentMatch = celebrityMatches[currentMatchIndex];
-    
+
     return (
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
             <Sparkles className="w-8 h-8 text-purple-600" />
-            <h2 className="text-3xl font-bold text-gray-900">Your Celebrity Match</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Result</h2>
           </div>
           {celebrityMatches.length > 0 && (
             <div className="bg-teal-100 rounded-full px-4 py-2 text-sm font-medium text-teal-700">
@@ -603,137 +616,37 @@ export default function Dashboard() {
         </div>
 
         {celebrityMatches.length > 0 && currentMatch ? (
-          <>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-              {/* Your Photo */}
-              <Card className="lg:col-span-1">
-                <CardHeader className="text-center">
-                  <div className="bg-blue-100 rounded-xl py-2 px-4 mb-4 inline-block">
-                    <span className="text-blue-700 font-semibold">YOU</span>
-                  </div>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <div className="w-48 h-48 bg-gray-200 rounded-2xl mx-auto mb-4 overflow-hidden">
-                    {previewUrl ? (
-                      <img 
-                        src={previewUrl} 
-                        alt="Your uploaded photo" 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <UserIcon className="w-16 h-16 text-gray-400" />
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Your Photo</h3>
-                  <p className="text-gray-600 text-sm mb-4">Original for comparison</p>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: '100%' }}></div>
-                  </div>
-                  <p className="text-sm text-gray-600">Reference Image</p>
-                </CardContent>
-              </Card>
-
-              {/* Navigation */}
-              <div className="lg:col-span-1 flex flex-col items-center justify-center space-y-4">
+            <>
+              <CelebrityMatchCard
+                celebrityName={currentMatch.name}
+                similarity={currentMatch.similarity}
+                userImage={previewUrl || capturedImage || ''}
+                onNext={() => handleNavigateMatch('next')}
+                onPrev={() => handleNavigateMatch('prev')}
+                isNextDisabled={currentMatchIndex === celebrityMatches.length - 1}
+                isPrevDisabled={currentMatchIndex === 0}
+                currentMatchIndex={currentMatchIndex}
+                totalMatches={celebrityMatches.length}
+              />
+              <div className="text-center mt-6">
                 <Button
-                  onClick={() => handleNavigateMatch('prev')}
-                  disabled={currentMatchIndex === 0}
+                  onClick={() => {
+                    setUploadMode('upload');
+                    handleRemoveFile();
+                    setCelebrityMatches([]);
+                  }}
                   variant="outline"
-                  size="sm"
-                  className="rounded-full p-2"
                 >
-                  <ChevronLeft className="w-4 h-4" />
-                </Button>
-                <div className="text-center">
-                  <p className="text-sm text-gray-600 mb-2">Navigate</p>
-                  <p className="text-sm text-gray-500">matches</p>
-                </div>
-                <Button
-                  onClick={() => handleNavigateMatch('next')}
-                  disabled={currentMatchIndex === celebrityMatches.length - 1}
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full p-2"
-                >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  Try another photo
                 </Button>
               </div>
-
-              {/* Celebrity Match */}
-              <Card className="lg:col-span-1">
-                <CardHeader className="text-center">
-                  <div className="bg-yellow-100 rounded-xl py-2 px-4 mb-4 inline-block">
-                    <span className="text-yellow-700 font-semibold">
-                      #{currentMatchIndex + 1} MATCH • {Math.round(currentMatch.similarity * 100)}%
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <CelebrityImageMultiSource
-                    name={currentMatch.name}
-                    similarity={currentMatch.similarity}
-                    index={currentMatchIndex}
-                  />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{currentMatch.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4">Celebrity match</p>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                    <div 
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        currentMatchIndex % 4 === 0 ? 'bg-green-500' :
-                        currentMatchIndex % 4 === 1 ? 'bg-blue-500' :
-                        currentMatchIndex % 4 === 2 ? 'bg-purple-500' :
-                        'bg-pink-500'
-                      }`}
-                      style={{ width: `${currentMatch.similarity * 100}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-sm text-gray-600">Similarity Score</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Navigation Dots */}
-            <div className="flex justify-center space-x-2 mb-6">
-              {celebrityMatches.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentMatchIndex(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentMatchIndex ? 'bg-purple-600' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-
-            <p className="text-center text-gray-600 text-sm mb-8">
-              Use navigation arrows or click dots to compare matches
-            </p>
-          </>
+            </>
         ) : (
-          <div className="text-center py-12">
-            <UserIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No celebrity matches found. Upload a photo to get started!</p>
+          <div className="text-center py-16">
+            <p className="text-gray-500">Your match will appear here.</p>
           </div>
         )}
-
-        {/* Action Button */}
-        <div className="text-center">
-          <Button
-            onClick={() => {
-              setUploadMode('upload');
-              setUploadedFile(null);
-              setCelebrityMatches([]);
-              setApiError(null);
-              setCurrentMatchIndex(0);
-            }}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-2xl text-lg font-semibold"
-          >
-            <Upload className="w-5 h-5 mr-2" />
-            Try Another Photo
-          </Button>
-        </div>
       </div>
     );
   };
@@ -844,7 +757,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Mobile Sidebar Toggle */}
       <div className="lg:hidden fixed top-4 left-4 z-40">
         <Button
@@ -859,56 +772,50 @@ export default function Dashboard() {
 
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black/50 z-30"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`bg-white shadow-xl flex flex-col transition-all duration-300 ${
-        isSidebarOpen ? 'w-80' : 'w-20'
-      } ${
-        // Mobile: show as overlay, Desktop: always visible
-        'lg:relative fixed lg:translate-x-0 z-40 h-full lg:h-auto'
-      } ${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      }`}>
-        {/* Navigation Items */}
-        <div className="flex-1 pt-6 pb-6">
-          <div className="px-6 mb-8">
-            {isSidebarOpen ? (
-              <>
-                <div className="flex items-center justify-between mb-2">
-                  <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                  <Button
-                    onClick={() => setIsSidebarOpen(false)}
-                    variant="ghost"
-                    size="sm"
-                    className="hidden lg:flex text-gray-500 hover:text-gray-700"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-                <p className="text-gray-600">Discover your alternities</p>
-              </>
-            ) : (
-              <div className="flex flex-col items-center">
-                <div className="w-8 h-8 bg-gradient-to-r from-crimson to-red-600 rounded-lg mb-3"></div>
-                <Button
-                  onClick={() => setIsSidebarOpen(true)}
-                  variant="ghost"
-                  size="sm"
-                  className="hidden lg:flex text-gray-500 hover:text-gray-700 p-1"
-                  title="Expand Sidebar"
-                >
-                  <MenuIcon className="w-4 h-4" />
-                </Button>
-              </div>
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-30
+          bg-white
+          transition-all duration-300 ease-in-out
+          lg:relative
+          ${isSidebarOpen ? 'w-64' : 'w-20'}
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          flex flex-col border-r border-gray-200 max-h-screen
+        `}
+      >
+        {/* Sidebar Header */}
+        <div className={`flex items-center p-4 h-16 border-b border-gray-200 ${isSidebarOpen ? 'justify-between' : 'justify-center'}`}>
+          <div className="flex items-center">
+            <img
+              src={logoOnly}
+              alt="Alternity Logo"
+              className="h-7"
+            />
+            {isSidebarOpen && (
+              <span className="ml-2 text-xl text-gray-900">alternity</span>
             )}
           </div>
-          
-          <nav className="space-y-2 px-4">
+          {isSidebarOpen && (
+            <Button
+              onClick={() => setIsSidebarOpen(false)}
+              variant="ghost"
+              size="sm"
+              className="lg:hidden text-gray-500 hover:text-gray-700"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          )}
+        </div>
+
+        {/* Navigation Items */}
+        <nav className="flex-1 space-y-2 p-4 mt-4">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeSection === item.id;
@@ -916,76 +823,52 @@ export default function Dashboard() {
                 <button
                   key={item.id}
                   onClick={() => handleSectionChange(item.id as DashboardSection)}
-                  className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 ${
+                  className={`w-full flex items-center p-3 rounded-lg transition-all duration-200 ${
                     isActive
-                      ? 'bg-gradient-to-r from-crimson to-red-600 text-white shadow-lg'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-red-50 text-red-600 font-semibold'
+                      : 'text-gray-600 hover:bg-gray-100'
                   } ${!isSidebarOpen ? 'justify-center' : ''}`}
-                  title={!isSidebarOpen ? item.label : undefined}
+                  title={isSidebarOpen ? '' : item.label}
                 >
-                  <Icon className={`w-5 h-5 ${isSidebarOpen ? 'mr-3' : ''} ${isActive ? 'text-white' : item.color}`} />
-                  {isSidebarOpen && <span className="font-medium">{item.label}</span>}
+                  <Icon className={`w-6 h-6 ${isSidebarOpen ? 'mr-3' : ''}`} />
+                  {isSidebarOpen && <span className="font-semibold">{item.label}</span>}
                 </button>
               );
             })}
-          </nav>
-        </div>
+        </nav>
 
         {/* User Info */}
-        <div className="p-6 border-t border-gray-200">
-          {isSidebarOpen ? (
-            <>
-              <div className="flex items-center space-x-3 mb-6">
-                <img 
-                  src={user?.imageUrl} 
-                  alt="User" 
-                  className="w-12 h-12 rounded-full border-2 border-white/50"
+        <div className="p-4 border-t border-gray-200">
+            <div className={`flex items-center ${isSidebarOpen ? 'space-x-3' : 'justify-center'}`}>
+                <img
+                  src={user?.imageUrl}
+                  alt="User"
+                  className="w-10 h-10 rounded-full"
                 />
-                <div>
-                  <h3 className="font-bold text-lg text-white">{user?.fullName}</h3>
-                  <p className="text-sm text-gray-300">{user?.primaryEmailAddress?.emailAddress}</p>
+              {isSidebarOpen && (
+                <div className="flex-1 overflow-hidden">
+                  <h3 className="font-bold text-base text-gray-800 truncate">{user?.fullName}</h3>
+                  <p className="text-sm text-gray-500 truncate">{user?.primaryEmailAddress?.emailAddress}</p>
                 </div>
-              </div>
+              )}
+            </div>
+          {isSidebarOpen && (
               <Button
                 variant="ghost"
-                onClick={() => {
-                  // Clear auth state and redirect to home
-                  localStorage.removeItem('user');
-                  localStorage.removeItem('isAuthenticated');
-                  window.location.href = '/';
-                }}
-                className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50"
+                onClick={() => signOut({ redirectUrl: '/' })}
+                className="w-full justify-start text-gray-500 hover:text-red-600 hover:bg-red-50 mt-4"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
+                Back to Home
               </Button>
-            </>
-          ) : (
-            <div className="flex flex-col items-center space-y-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-crimson to-red-600 rounded-full flex items-center justify-center">
-                <UserIcon className="w-5 h-5 text-white" />
-              </div>
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  localStorage.removeItem('user');
-                  localStorage.removeItem('isAuthenticated');
-                  window.location.href = '/';
-                }}
-                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50"
-                title="Sign Out"
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
           )}
         </div>
-      </div>
+      </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Fixed Top Navbar for Dashboard */}
-        <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="bg-white shadow-sm border-b border-gray-200 px-6 h-16 flex items-center justify-between z-10">
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
@@ -998,18 +881,18 @@ export default function Dashboard() {
               {sidebarItems.find(item => item.id === activeSection)?.label || 'Dashboard'}
             </h2>
           </div>
-          
+
           <div className="flex items-center space-x-3">
-            <div className="text-sm text-gray-500">
-              Welcome back, John
+            <div className="text-md text-gray-500">
+              Welcome back, {user?.firstName || user?.fullName || 'User'}
             </div>
           </div>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 p-8 overflow-y-auto">
+        <main className="flex-1 p-8 overflow-y-auto">
           {renderSection()}
-        </div>
+        </main>
       </div>
     </div>
   );

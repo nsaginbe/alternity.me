@@ -6,6 +6,7 @@ interface CelebrityImageProps {
   name: string;
   similarity: number;
   index: number;
+  size?: number; // Add size prop
   className?: string;
 }
 
@@ -13,6 +14,7 @@ export const CelebrityImage: React.FC<CelebrityImageProps> = ({
   name, 
   similarity, 
   index, 
+  size = 48, // Default size
   className = '' 
 }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -57,7 +59,7 @@ export const CelebrityImage: React.FC<CelebrityImageProps> = ({
 
   if (isLoading) {
     return (
-      <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-gray-200 animate-pulse ${className}`}>
+      <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center bg-gray-200 animate-pulse ${className}`}>
         <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -65,7 +67,7 @@ export const CelebrityImage: React.FC<CelebrityImageProps> = ({
 
   if (imageUrl && !hasError) {
     return (
-      <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 overflow-hidden ${className}`}>
+      <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 overflow-hidden ${className}`}>
         <img
           src={imageUrl}
           alt={name}
@@ -78,7 +80,7 @@ export const CelebrityImage: React.FC<CelebrityImageProps> = ({
 
   // Fallback to colored block with initials
   return (
-    <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 flex items-center justify-center ${getColorClass(index)} ${className}`}>
+    <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center ${getColorClass(index)} ${className}`}>
       <span className="text-6xl font-bold text-white">
         {getInitials(name)}
       </span>
@@ -91,6 +93,7 @@ export const CelebrityImageWithUnsplash: React.FC<CelebrityImageProps> = ({
   name, 
   similarity, 
   index, 
+  size = 48, // Default size
   className = '' 
 }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -144,7 +147,7 @@ export const CelebrityImageWithUnsplash: React.FC<CelebrityImageProps> = ({
 
   if (isLoading) {
     return (
-      <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-gray-200 animate-pulse ${className}`}>
+      <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center bg-gray-200 animate-pulse ${className}`}>
         <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -152,7 +155,7 @@ export const CelebrityImageWithUnsplash: React.FC<CelebrityImageProps> = ({
 
   if (imageUrl && !hasError) {
     return (
-      <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 overflow-hidden ${className}`}>
+      <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 overflow-hidden ${className}`}>
         <img
           src={imageUrl}
           alt={name}
@@ -165,7 +168,7 @@ export const CelebrityImageWithUnsplash: React.FC<CelebrityImageProps> = ({
 
   // Fallback to colored block with initials
   return (
-    <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 flex items-center justify-center ${getColorClass(index)} ${className}`}>
+    <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center ${getColorClass(index)} ${className}`}>
       <span className="text-6xl font-bold text-white">
         {getInitials(name)}
       </span>
@@ -178,6 +181,7 @@ export const CelebrityImageMultiSource: React.FC<CelebrityImageProps> = ({
   name, 
   similarity, 
   index, 
+  size = 48, // Default size
   className = '' 
 }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -202,11 +206,11 @@ export const CelebrityImageMultiSource: React.FC<CelebrityImageProps> = ({
           photo = staticCelebrityService.getCelebrityPhoto(name);
         }
         
-        // Try 3: Unsplash as last resort
+        // Try 3: Unsplash API as a final fallback
         if (!photo) {
           setCurrentSource('Unsplash');
-          const unsplashQuery = encodeURIComponent(name + ' celebrity');
-          photo = `https://source.unsplash.com/400x400/?${unsplashQuery}`;
+          const unsplashQuery = encodeURIComponent(name);
+          photo = `https://source.unsplash.com/400x400/?${unsplashQuery},face,portrait`;
         }
         
         setImageUrl(photo);
@@ -242,7 +246,7 @@ export const CelebrityImageMultiSource: React.FC<CelebrityImageProps> = ({
 
   if (isLoading) {
     return (
-      <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-gray-200 animate-pulse ${className}`}>
+      <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center bg-gray-200 animate-pulse ${className}`}>
         <div className="flex flex-col items-center">
           <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mb-2"></div>
           <span className="text-xs text-gray-500">Loading...</span>
@@ -253,7 +257,7 @@ export const CelebrityImageMultiSource: React.FC<CelebrityImageProps> = ({
 
   if (imageUrl && !hasError) {
     return (
-      <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 overflow-hidden relative ${className}`}>
+      <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 overflow-hidden shadow-lg ${className}`}>
         <img
           src={imageUrl}
           alt={name}
@@ -266,7 +270,7 @@ export const CelebrityImageMultiSource: React.FC<CelebrityImageProps> = ({
 
   // Fallback to colored block with initials
   return (
-    <div className={`w-48 h-48 rounded-2xl mx-auto mb-4 flex items-center justify-center ${getColorClass(index)} ${className}`}>
+    <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center ${getColorClass(index)} ${className}`}>
       <span className="text-6xl font-bold text-white">
         {getInitials(name)}
       </span>

@@ -5,11 +5,10 @@ import SocialLinks from './SocialLinks';
 import { SignUpButton } from '@clerk/clerk-react';
 
 // Импортируем наши новые компоненты
-import { GridSection } from './landing';
+import { GridSection, AnimatedHeader, HowItWorks } from './landing';
 
 // Импортируем хуки и константы
 import { useScrollEffect } from '../hooks/useScrollEffect';
-import { FEATURE_BLOCKS, HERO_STATS } from '../constants/features';
 
 interface FeatureCard {
   title: string;
@@ -117,18 +116,23 @@ function ModernLanding() {
       <div className="min-h-screen bg-[#f4f5f0]">
         {/* Hero Section */}
         <section id="hero" className="pt-32 pb-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <GridSection 
-              features={FEATURE_BLOCKS}
               onFeatureClick={handleFeatureClick}
-              onGetStarted={handleGetStarted}
             />
           </div>
         </section>
+          
+        <div className="bg-white rounded-lg p-8 text-center">
+          <AnimatedHeader 
+            title="Discover Your Digital Twin"
+            subtitle="Our top-rated features to help you explore your identity like never before. See what our community loves the most."
+          />
+        </div>
 
         {/* Features Section */}
         <section id="features" className="py-20 bg-[#f4f5f0]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               
               {/* Top Picks */}
@@ -144,10 +148,11 @@ function ModernLanding() {
                     <div 
                       key={index} 
                       onClick={() => handleFeatureCardClick(feature.title)}
-                      className="flex items-center justify-between bg-gray-50 rounded-2xl p-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200 group"
+                      className="relative overflow-hidden flex items-center justify-between bg-gray-50 rounded-2xl p-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200 group"
                     >
+                      <div className="shine-effect"></div>
                       <div className="flex items-center space-x-4">
-                        <div className={`w-14 h-14 bg-gradient-to-r ${feature.gradient} rounded-full flex items-center justify-center text-white group-hover:scale-105 transition-transform duration-200`}>
+                        <div className={`w-14 h-14 bg-gradient-to-r ${feature.gradient} rounded-full flex items-center justify-center text-white transition-transform duration-200`}>
                           {feature.icon}
                         </div>
                         <div>
@@ -158,7 +163,7 @@ function ModernLanding() {
                       
                       <div className="flex items-center space-x-3">
                         <span className="font-bold text-gray-900">{feature.price}</span>
-                        <button className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white hover:bg-green-700 transition-colors group-hover:scale-105 transform duration-200">
+                        <button className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white hover:bg-green-700 transition-colors transform duration-200">
                           <ArrowRight className="w-5 h-5" />
                         </button>
                       </div>
@@ -201,40 +206,7 @@ function ModernLanding() {
           </div>
         </section>
 
-        {/* How It Works */}
-        <section id="how-it-works" className="py-20 bg-[#f4f5f0]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-4xl font-black text-center text-gray-900 mb-16">
-              HOW IT WORKS
-            </h2>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Camera className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">1. UPLOAD PHOTO</h3>
-                <p className="text-gray-600">Take a selfie or upload your best photo</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Zap className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">2. AI ANALYSIS</h3>
-                <p className="text-gray-600">Our AI analyzes your facial features</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Star className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">3. GET RESULTS</h3>
-                <p className="text-gray-600">Discover your matches across multiple categories</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <HowItWorks />
 
         {/* CTA Section */}
         <section className="py-20 bg-gradient-to-r from-crimson to-red-600">
@@ -259,7 +231,7 @@ function ModernLanding() {
 
         {/* Footer */}
         <footer className="bg-gray-900 text-white py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="flex items-center mb-6 md:mb-0">
                 <span className="text-xl font-bold">Alternity</span>
