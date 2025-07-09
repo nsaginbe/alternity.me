@@ -138,7 +138,7 @@ export default function Dashboard() {
 
   // Call celebrity lookalike API
   const findCelebLookalike = async (base64ImageData: string): Promise<ApiResponse> => {
-    const apiUrl = import.meta.env.VITE_BACK_API_URL || 'http://localhost:5000';
+    const apiUrl = import.meta.env.VITE_BACK_API_URL;
     console.log(`🚀 Starting API call to ${apiUrl}/find`);
     console.log('📦 Base64 data length:', base64ImageData.length);
 
@@ -181,7 +181,7 @@ export default function Dashboard() {
     } catch (error) {
       if (error instanceof TypeError && error.message.includes('fetch')) {
         console.error('❌ Network error - API server may not be running');
-        throw new Error(`Cannot connect to API server. Please ensure the backend is running on ${apiUrl}`);
+        throw new Error(`Cannot connect to API server`);
       }
       throw error;
     }
