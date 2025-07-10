@@ -19,47 +19,43 @@ export const GridSection: React.FC<{ onFeatureClick: (id: string) => void }> = (
     <div className={GRID_LAYOUT_CLASSES.container}>
       
       {celebrityFeature && (
-        <div className={GRID_LAYOUT_CLASSES.celebrity}>
-          <FeatureCard 
-            feature={{
-              ...celebrityFeature,
-              onClick: () => handleFeatureClick('celebrity')
-            }} 
-          />
-        </div>
+        <FeatureCard
+          className={GRID_LAYOUT_CLASSES.celebrity}
+          feature={{
+            ...celebrityFeature,
+            onClick: () => handleFeatureClick('celebrity')
+          }} 
+        />
       )}
 
       {spiritAnimalFeature && (
-        <div className={GRID_LAYOUT_CLASSES.spiritAnimal}>
-          <FeatureCard 
-            feature={{
-              ...spiritAnimalFeature,
-              onClick: () => handleFeatureClick('animal')
-            }} 
-          />
-        </div>
+        <FeatureCard
+          className={GRID_LAYOUT_CLASSES.spiritAnimal}
+          feature={{
+            ...spiritAnimalFeature,
+            onClick: () => handleFeatureClick('animal')
+          }} 
+        />
       )}
 
       {colorFeature && (
-        <div className={GRID_LAYOUT_CLASSES.color}>
-          <FeatureCard 
-            feature={{
-              ...colorFeature,
-              onClick: () => handleFeatureClick('color')
-            }} 
-          />
-        </div>
+        <FeatureCard
+          className={GRID_LAYOUT_CLASSES.color}
+          feature={{
+            ...colorFeature,
+            onClick: () => handleFeatureClick('color')
+          }} 
+        />
       )}
 
       {personalityFeature && (
-        <div className={GRID_LAYOUT_CLASSES.personality}>
-          <FeatureCard 
-            feature={{
-              ...personalityFeature,
-              onClick: () => handleFeatureClick('gender')
-            }} 
-          />
-        </div>
+        <FeatureCard
+          className={GRID_LAYOUT_CLASSES.personality}
+          feature={{
+            ...personalityFeature,
+            onClick: () => handleFeatureClick('gender')
+          }} 
+        />
       )}
 
     </div>

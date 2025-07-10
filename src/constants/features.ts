@@ -49,11 +49,11 @@ export const HERO_STATS = {
 };
 
 export const GRID_LAYOUT_CLASSES = {
-  container: 'grid grid-cols-2 gap-4',
-  celebrity: 'col-span-1 row-span-1', // Will need to make this one taller.
-  spiritAnimal: 'col-span-1 row-span-1',
-  personality: 'col-span-1 row-span-1', // gender
-  color: 'col-span-1 row-span-1'
+  container: 'grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-4',
+  celebrity: 'md:col-span-2 md:row-span-2',
+  spiritAnimal: 'md:col-span-1',
+  personality: 'md:col-span-3',
+  color: 'md:col-span-1',
 };
 
 export const ANIMATION_CLASSES = {

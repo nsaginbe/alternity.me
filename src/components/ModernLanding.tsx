@@ -212,7 +212,7 @@ function ModernLanding() {
               <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-3xl p-8 text-white">
                 <h3 className="text-3xl font-black mb-6">TRUSTED BY THOUSANDS</h3>
                 
-                <div className="grid grid-cols-3 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                   {stats.map((stat, index) => (
                     <div key={index} className="text-center">
                       <div className="text-2xl font-bold">{stat.number}</div>
