@@ -13,7 +13,7 @@ export const GridSection: React.FC<{ onFeatureClick: (id: string) => void }> = (
   const celebrityFeature = FEATURE_BLOCKS.find((f: FeatureBlock) => f.id === 'celebrity');
   const spiritAnimalFeature = FEATURE_BLOCKS.find((f: FeatureBlock) => f.id === 'animal');
   const colorFeature = FEATURE_BLOCKS.find((f: FeatureBlock) => f.id === 'color');
-  const personalityFeature = FEATURE_BLOCKS.find((f: FeatureBlock) => f.id === 'gender');
+  const personalityFeature = FEATURE_BLOCKS.find((f: FeatureBlock) => f.id === 'personality');
 
   return (
     <div className={GRID_LAYOUT_CLASSES.container}>
@@ -53,7 +53,7 @@ export const GridSection: React.FC<{ onFeatureClick: (id: string) => void }> = (
           className={GRID_LAYOUT_CLASSES.personality}
           feature={{
             ...personalityFeature,
-            onClick: () => handleFeatureClick('gender')
+            onClick: () => handleFeatureClick('personality')
           }} 
         />
       )}

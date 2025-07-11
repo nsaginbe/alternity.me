@@ -17,6 +17,11 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
         role="button"
         tabIndex={0}
         aria-label={`${feature.title} - ${feature.description}`}
+        style={{
+          backgroundImage: feature.backgroundImage ? `url(${feature.backgroundImage})` : 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -24,13 +29,15 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
           }
         }}
       >
-        <div className="flex flex-col items-center justify-center h-full text-center">
-          <div className={ANIMATION_CLASSES.iconContainer}>
-            <IconComponent className="w-6 h-6" />
+        {!feature.backgroundImage && (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className={ANIMATION_CLASSES.iconContainer}>
+              <IconComponent className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold mb-1">{feature.title}</h3>
+            <p className={`text-sm ${feature.textColor}`}>{feature.description}</p>
           </div>
-          <h3 className="text-lg font-bold mb-1">{feature.title}</h3>
-          <p className={`text-sm ${feature.textColor}`}>{feature.description}</p>
-        </div>
+        )}
       </div>
     </div>
   );

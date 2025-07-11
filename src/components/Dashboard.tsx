@@ -35,7 +35,7 @@ import {
 import { CelebrityMatchCard } from './CelebrityMatchCard';
 import logoOnly from '/src/assets/logo-only-transparent.png';
 
-type DashboardSection = 'celebrity' | 'animal' | 'color' | 'gender' | 'analytics' | 'settings';
+type DashboardSection = 'celebrity' | 'animal' | 'color' | 'personality' | 'analytics' | 'settings';
 
 interface CelebrityMatch {
   name: string;
@@ -87,7 +87,7 @@ export default function Dashboard() {
   // Handle URL parameters for direct section navigation
   useEffect(() => {
     const section = searchParams.get('section') as DashboardSection;
-    if (section && ['celebrity', 'animal', 'color', 'gender', 'analytics', 'settings'].includes(section)) {
+    if (section && ['celebrity', 'animal', 'color', 'personality', 'analytics', 'settings'].includes(section)) {
       setActiveSection(section);
     }
   }, [searchParams]);
@@ -260,7 +260,7 @@ export default function Dashboard() {
     { id: 'celebrity', label: 'Celebrity Match', icon: Star, color: 'text-yellow-600' },
     { id: 'animal', label: 'Spirit Animal', icon: Sparkles, color: 'text-emerald-600' },
     { id: 'color', label: 'Color Analysis', icon: Palette, color: 'text-pink-600' },
-    { id: 'gender', label: 'Gender Analysis', icon: Eye, color: 'text-blue-600' },
+    { id: 'personality', label: '16 Personalities', icon: Eye, color: 'text-blue-600' },
     { id: 'analytics', label: 'Analytics', icon: BarChart3, color: 'text-indigo-600' },
     { id: 'settings', label: 'Settings', icon: Settings, color: 'text-gray-600' }
   ];
@@ -684,12 +684,12 @@ export default function Dashboard() {
             </div>
           </DevelopmentBadge>
         );
-      case 'gender':
+      case 'personality':
         return (
           <DevelopmentBadge>
             <div className="max-w-4xl mx-auto text-center">
               <Eye className="w-16 h-16 text-blue-600 mx-auto mb-6" />
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Gender Analysis</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Personality Analysis</h2>
               <p className="text-gray-600 mb-8">Advanced facial feature analysis and gender prediction</p>
               <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                 <Upload className="w-4 h-4 mr-2" />

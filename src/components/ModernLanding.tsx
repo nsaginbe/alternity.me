@@ -29,7 +29,7 @@ function ModernLanding() {
     'celebrity': 'celebrity',
     'animal': 'animal',
     'color': 'color',
-    'gender': 'gender',
+    'personality': 'personality',
   };
 
   // Обработчики для блоков

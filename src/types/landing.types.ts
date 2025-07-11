@@ -9,6 +9,7 @@ export interface FeatureBlock {
   textColor: string;
   size: 'small' | 'medium' | 'large';
   onClick?: () => void;
+  backgroundImage?: string;
 }
 
 export interface FeatureCardProps {

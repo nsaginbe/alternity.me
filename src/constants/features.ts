@@ -1,5 +1,9 @@
 import { Star, Sparkles, Palette, User} from 'lucide-react';
 import { FeatureBlock } from '../types/landing.types';
+import celebrityImage from '../assets/celebrity.png';
+import colorImage from '../assets/color.png';
+import animalImage from '../assets/animal.png';
+import personalityImage from '../assets/personality.png';
 
 export const FEATURE_BLOCKS: FeatureBlock[] = [
   {
@@ -9,7 +13,8 @@ export const FEATURE_BLOCKS: FeatureBlock[] = [
     icon: Star,
     gradient: 'from-purple-400 to-purple-600',
     textColor: 'text-purple-100',
-    size: 'large'
+    size: 'large',
+    backgroundImage: celebrityImage,
   },
   {
     id: 'animal',
@@ -18,7 +23,8 @@ export const FEATURE_BLOCKS: FeatureBlock[] = [
     icon: Sparkles,
     gradient: 'from-green-400 to-emerald-600',
     textColor: 'text-green-100',
-    size: 'medium'
+    size: 'medium',
+    backgroundImage: animalImage,
   },
   {
     id: 'color',
@@ -27,16 +33,18 @@ export const FEATURE_BLOCKS: FeatureBlock[] = [
     icon: Palette,
     gradient: 'from-rose-400 to-pink-600',
     textColor: 'text-pink-100',
-    size: 'small'
+    size: 'small',
+    backgroundImage: colorImage,
   },
   {
-    id: 'gender',
-    title: 'GENDER',
-    description: 'Gender analysis',
+    id: 'personality',
+    title: 'PERSONALITY',
+    description: 'Personality analysis',
     icon: User,
     gradient: 'from-indigo-400 to-purple-600',
     textColor: 'text-indigo-100',
-    size: 'medium'
+    size: 'medium',
+    backgroundImage: personalityImage,
   },
 ];
 
