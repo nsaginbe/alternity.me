@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { CelebrityMatchCard } from './CelebrityMatchCard';
 import logoOnly from '/src/assets/logo-only-transparent.png';
+import MBTIQuiz from './MBTIQuiz';
 
 type DashboardSection = 'celebrity' | 'animal' | 'color' | 'personality' | 'analytics' | 'settings';
 
@@ -685,19 +686,7 @@ export default function Dashboard() {
           </DevelopmentBadge>
         );
       case 'personality':
-        return (
-          <DevelopmentBadge>
-            <div className="max-w-4xl mx-auto text-center">
-              <Eye className="w-16 h-16 text-blue-600 mx-auto mb-6" />
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Personality Analysis</h2>
-              <p className="text-gray-600 mb-8">Advanced facial feature analysis and gender prediction</p>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                <Upload className="w-4 h-4 mr-2" />
-                Start Analysis
-              </Button>
-            </div>
-          </DevelopmentBadge>
-        );
+        return <MBTIQuiz />;
       case 'analytics':
         return (
           <DevelopmentBadge>
