@@ -35,6 +35,7 @@ import {
 import { CelebrityMatchCard } from './CelebrityMatchCard';
 import logoOnly from '/src/assets/logo-only-transparent.png';
 import MBTIQuiz from './MBTIQuiz';
+import imageCompression from "browser-image-compression";
 
 type DashboardSection = 'celebrity' | 'animal' | 'color' | 'personality' | 'analytics' | 'settings';
 
@@ -281,7 +282,7 @@ export default function Dashboard() {
 
 
 
-  const handleFileSelect = (files: FileList | null) => {
+  const handleFileSelect = async (files: FileList | null) => {
     if (files && files[0]) {
       const file = files[0];
 
@@ -291,13 +292,36 @@ export default function Dashboard() {
         return;
       }
 
-      // Validate file size (5MB max)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('File size must be less than 5MB');
+      // Validate file size (10MB max до сжатия)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
         return;
       }
 
-      setUploadedFile(file);
+      try {
+        setIsProcessing(true);
+        setApiError(null);
+
+        // Сжимаем и ресайзим изображение
+        const compressedFile = await imageCompression(file, {
+          maxWidthOrHeight: 2000, // или меньше, если сервер ограничивает
+          maxSizeMB: 2,           // или меньше, если сервер ограничивает
+          useWebWorker: true,
+        });
+
+        setUploadedFile(compressedFile);
+
+        // Для превью
+        const previewUrl = URL.createObjectURL(compressedFile);
+        setPreviewUrl(previewUrl);
+
+      } catch (err: any) {
+        setApiError("❌ Error compressing image: " + err.message);
+        setUploadedFile(null);
+        setPreviewUrl(null);
+      } finally {
+        setIsProcessing(false);
+      }
     }
   };
 

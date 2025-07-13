@@ -5,7 +5,6 @@ import ModernLanding from './components/ModernLanding';
 import FloatingNav from './components/FloatingNav';
 import Dashboard from './components/Dashboard';
 import Pricing from './components/Pricing';
-import React from 'react';
 import SignInModalTrigger from './components/SignInModalTrigger';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
