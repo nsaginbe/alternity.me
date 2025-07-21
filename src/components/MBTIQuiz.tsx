@@ -20,6 +20,11 @@ interface Question {
   }[];
 }
 
+interface FamousPerson {
+  name: string;
+  description: string;
+}
+
 interface ResultData {
     mbti_type: string;
     type_name: string;
@@ -27,11 +32,12 @@ interface ResultData {
     strengths: string[];
     challenges: string[];
     career_paths: string[];
+    famous_people: FamousPerson[];
     summary: string;
     official_link: string;
 }
 
-const questions: Question[] = questionsData; // Using only first 10 questions for testing
+const questions: Question[] = questionsData.slice(0, 10); // Using only first 10 questions for testing
 const questionsTextMap = questions.reduce((acc, q) => {
     acc[q.id] = q.text;
     return acc;
@@ -80,7 +86,7 @@ const MBTIQuiz = () => {
 
     try {
       const apiUrl = import.meta.env.VITE_MBTI_BACK_API_URL;
-      const response = await fetch(`${apiUrl}/api/mbti-analysis`, {
+      const response = await fetch(`${apiUrl}/analyse`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -186,6 +192,23 @@ const MBTIQuiz = () => {
                         </div>
                     ))}
                 </div>
+            </CardContent>
+        </Card>
+
+        {/* Famous People Section */}
+        <Card className="mb-6">
+            <CardHeader>
+                <CardTitle className="flex items-center"><Heart className="mr-2 text-pink-500"/> Famous People with this Type</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ul className="space-y-2">
+                  {result.famous_people && result.famous_people.map((person, idx) => (
+                    <li key={idx} className="flex flex-col md:flex-row md:items-center md:space-x-2">
+                      <span className="font-semibold text-blue-700 dark:text-blue-300">{person.name}</span>
+                      <span className="text-gray-700 dark:text-gray-300">- {person.description}</span>
+                    </li>
+                  ))}
+                </ul>
             </CardContent>
         </Card>
 
