@@ -2,58 +2,60 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, Star, Sparkles, Crown, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Pricing() {
+  const { t } = useTranslation();
   const plans = [
     {
-      name: 'Free',
+      name: t('pricing.plans.free.name'),
       price: '$0',
-      period: 'forever',
-      description: 'Perfect for trying out our AI matching',
+      period: t('pricing.plans.free.period'),
+      description: t('pricing.plans.free.description'),
       features: [
-        'Celebrity match',
-        'Basic analysis',
-        '1 photo per day',
-        'Basic results'
+        t('pricing.plans.free.feature1'),
+        t('pricing.plans.free.feature2'),
+        t('pricing.plans.free.feature3'),
+        t('pricing.plans.free.feature4')
       ],
       icon: <Star className="w-6 h-6" />,
-      buttonText: 'Get Started',
+      buttonText: t('pricing.plans.free.buttonText'),
       buttonVariant: 'outline' as const,
       popular: false
     },
     {
-      name: 'Pro',
+      name: t('pricing.plans.pro.name'),
       price: '$9.99',
-      period: 'month',
-      description: 'Enhanced features for better matches',
+      period: t('pricing.plans.pro.period'),
+      description: t('pricing.plans.pro.description'),
       features: [
-        'Celebrity match',
-        'Spirit animal match',
-        'Color analysis',
-        'Unlimited photos',
-        'Advanced AI analysis',
-        'Priority support'
+        t('pricing.plans.pro.feature1'),
+        t('pricing.plans.pro.feature2'),
+        t('pricing.plans.pro.feature3'),
+        t('pricing.plans.pro.feature4'),
+        t('pricing.plans.pro.feature5'),
+        t('pricing.plans.pro.feature6')
       ],
       icon: <Sparkles className="w-6 h-6" />,
-      buttonText: 'Start Pro',
+      buttonText: t('pricing.plans.pro.buttonText'),
       buttonVariant: 'default' as const,
       popular: true
     },
     {
-      name: 'Premium',
+      name: t('pricing.plans.premium.name'),
       price: '$19.99',
-      period: 'month',
-      description: 'Everything you need for complete analysis',
+      period: t('pricing.plans.premium.period'),
+      description: t('pricing.plans.premium.description'),
       features: [
-        'All Pro features',
-        'Detailed personality analysis',
-        'Custom AI models',
-        'Historical data',
-        'API access',
-        'White-label solution'
+        t('pricing.plans.premium.feature1'),
+        t('pricing.plans.premium.feature2'),
+        t('pricing.plans.premium.feature3'),
+        t('pricing.plans.premium.feature4'),
+        t('pricing.plans.premium.feature5'),
+        t('pricing.plans.premium.feature6')
       ],
       icon: <Crown className="w-6 h-6" />,
-      buttonText: 'Go Premium',
+      buttonText: t('pricing.plans.premium.buttonText'),
       buttonVariant: 'default' as const,
       popular: false
     }
@@ -64,10 +66,10 @@ export default function Pricing() {
       <div className="max-w-6xl mx-auto px-4 py-8 pt-32">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Choose Your Plan
+            {t('pricing.choosePlan')}
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Unlock the power of AI-driven personality and appearance matching
+            {t('pricing.unlockPower')}
           </p>
         </div>
 
@@ -84,7 +86,7 @@ export default function Pricing() {
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                    Most Popular
+                    {t('pricing.mostPopular')}
                   </div>
                 </div>
               )}
@@ -133,47 +135,47 @@ export default function Pricing() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Frequently Asked Questions
+              {t('pricing.faq')}
             </h2>
             <p className="text-gray-600">
-              Everything you need to know about our pricing
+              {t('pricing.faqDesc')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">
-                Can I cancel anytime?
+                {t('pricing.cancelAnytime.q')}
               </h3>
               <p className="text-gray-600 text-sm">
-                Yes, you can cancel your subscription at any time. No questions asked.
+                {t('pricing.cancelAnytime.a')}
               </p>
             </div>
             
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">
-                What payment methods do you accept?
+                {t('pricing.paymentMethods.q')}
               </h3>
               <p className="text-gray-600 text-sm">
-                We accept all major credit cards, PayPal, and Apple Pay.
+                {t('pricing.paymentMethods.a')}
               </p>
             </div>
             
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">
-                Is my data secure?
+                {t('pricing.dataSecure.q')}
               </h3>
               <p className="text-gray-600 text-sm">
-                Absolutely. We use enterprise-grade encryption and never store your photos.
+                {t('pricing.dataSecure.a')}
               </p>
             </div>
             
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">
-                Do you offer refunds?
+                {t('pricing.refunds.q')}
               </h3>
               <p className="text-gray-600 text-sm">
-                Yes, we offer a 30-day money-back guarantee for all paid plans.
+                {t('pricing.refunds.a')}
               </p>
             </div>
           </div>

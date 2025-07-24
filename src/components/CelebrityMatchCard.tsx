@@ -1,8 +1,11 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, User as UserIcon } from 'lucide-react';
+
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CelebrityImageMultiSource } from './CelebrityImage';
+import { useTranslation } from 'react-i18next';
 
 interface CelebrityMatchCardProps {
   celebrityName: string;
@@ -27,6 +30,7 @@ export const CelebrityMatchCard: React.FC<CelebrityMatchCardProps> = ({
   currentMatchIndex,
   totalMatches,
 }) => {
+  const { t } = useTranslation();
   return (
     <Card className="w-full bg-white shadow-xl rounded-2xl">
       <CardContent className="p-4 sm:p-6 md:p-8">
@@ -34,7 +38,7 @@ export const CelebrityMatchCard: React.FC<CelebrityMatchCardProps> = ({
           
           {/* User's Photo */}
           <div className="flex flex-col items-center gap-2 sm:gap-4">
-            <h3 className="text-lg sm:text-xl font-bold text-gray-800">Your Photo</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800">{t('dashboard.result.yourPhoto')}</h3>
             <div className="w-40 h-40 sm:w-60 sm:h-60 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-2xl overflow-hidden shadow-lg border-2 border-gray-100">
               <img src={userImage} alt="Your Photo" className="w-full h-full object-cover" />
             </div>
@@ -63,10 +67,10 @@ export const CelebrityMatchCard: React.FC<CelebrityMatchCardProps> = ({
         <div className="flex flex-col sm:flex-row justify-center items-center mt-6 sm:mt-8 space-y-2 sm:space-y-0 sm:space-x-4">
           <Button onClick={onPrev} disabled={isPrevDisabled} variant="outline" size="lg">
             <ChevronLeft className="w-5 h-5 mr-2" />
-            Previous
+            {t('dashboard.result.prev')}
           </Button>
           <Button onClick={onNext} disabled={isNextDisabled} variant="outline" size="lg">
-            Next
+            {t('dashboard.result.next')}
             <ChevronRight className="w-5 h-5 ml-2" />
           </Button>
         </div>

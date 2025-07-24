@@ -1,22 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 function Home() {
+  const { t } = useTranslation();
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+      <LanguageSwitcher />
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          Welcome to Alternity
+          {t('home.welcome')}
         </h1>
-        <p className="text-gray-600 mb-8">
-          Main page coming soon...
-        </p>
-        <Link 
-          to="/coming-soon"
-          className="inline-block px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300 font-semibold"
-        >
-          View Coming Soon Page
-        </Link>
+        {/* Removed coming soon message and link */}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { tmdbService } from '../services/tmdb';
 import { staticCelebrityService } from '../services/staticCelebrities';
+import anonymousImage from '../assets/anonymous.png';
 
 interface CelebrityImageProps {
   name: string;
@@ -12,8 +13,6 @@ interface CelebrityImageProps {
 
 export const CelebrityImage: React.FC<CelebrityImageProps> = ({ 
   name, 
-  similarity, 
-  index, 
   size = 48, // Default size
   className = '' 
 }) => {
@@ -39,24 +38,6 @@ export const CelebrityImage: React.FC<CelebrityImageProps> = ({
     fetchCelebrityPhoto();
   }, [name]);
 
-  const getColorClass = (index: number) => {
-    const colors = [
-      'bg-gradient-to-br from-green-400 to-green-600',
-      'bg-gradient-to-br from-blue-400 to-blue-600',
-      'bg-gradient-to-br from-purple-400 to-purple-600',
-      'bg-gradient-to-br from-pink-400 to-pink-600',
-      'bg-gradient-to-br from-orange-400 to-orange-600',
-      'bg-gradient-to-br from-red-400 to-red-600',
-      'bg-gradient-to-br from-teal-400 to-teal-600',
-      'bg-gradient-to-br from-indigo-400 to-indigo-600',
-    ];
-    return colors[index % colors.length];
-  };
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
-  };
-
   if (isLoading) {
     return (
       <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center bg-gray-200 animate-pulse ${className}`}>
@@ -78,12 +59,14 @@ export const CelebrityImage: React.FC<CelebrityImageProps> = ({
     );
   }
 
-  // Fallback to colored block with initials
+  // Fallback to static anonymous image
   return (
-    <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center ${getColorClass(index)} ${className}`}>
-      <span className="text-6xl font-bold text-white">
-        {getInitials(name)}
-      </span>
+    <div className={`w-[${size}px] h-[${size}px] rounded-full overflow-hidden mx-auto mb-4 shadow-inner border ${className}`}>
+      <img
+        src={anonymousImage}
+        alt="anonymous avatar"
+        className="w-full h-full object-cover"
+      />
     </div>
   );
 };
@@ -91,8 +74,6 @@ export const CelebrityImage: React.FC<CelebrityImageProps> = ({
 // Alternative component using Unsplash as fallback
 export const CelebrityImageWithUnsplash: React.FC<CelebrityImageProps> = ({ 
   name, 
-  similarity, 
-  index, 
   size = 48, // Default size
   className = '' 
 }) => {
@@ -127,24 +108,6 @@ export const CelebrityImageWithUnsplash: React.FC<CelebrityImageProps> = ({
     fetchCelebrityPhoto();
   }, [name]);
 
-  const getColorClass = (index: number) => {
-    const colors = [
-      'bg-gradient-to-br from-green-400 to-green-600',
-      'bg-gradient-to-br from-blue-400 to-blue-600',
-      'bg-gradient-to-br from-purple-400 to-purple-600',
-      'bg-gradient-to-br from-pink-400 to-pink-600',
-      'bg-gradient-to-br from-orange-400 to-orange-600',
-      'bg-gradient-to-br from-red-400 to-red-600',
-      'bg-gradient-to-br from-teal-400 to-teal-600',
-      'bg-gradient-to-br from-indigo-400 to-indigo-600',
-    ];
-    return colors[index % colors.length];
-  };
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
-  };
-
   if (isLoading) {
     return (
       <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center bg-gray-200 animate-pulse ${className}`}>
@@ -166,21 +129,21 @@ export const CelebrityImageWithUnsplash: React.FC<CelebrityImageProps> = ({
     );
   }
 
-  // Fallback to colored block with initials
+  // Fallback to static anonymous image
   return (
-    <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center ${getColorClass(index)} ${className}`}>
-      <span className="text-6xl font-bold text-white">
-        {getInitials(name)}
-      </span>
+    <div className={`w-[${size}px] h-[${size}px] rounded-full overflow-hidden mx-auto mb-4 shadow-inner border ${className}`}>
+      <img
+        src={anonymousImage}
+        alt="anonymous avatar"
+        className="w-full h-full object-cover"
+      />
     </div>
   );
 };
 
 // Multi-source celebrity image component (tries TMDb -> Static -> Unsplash)
 export const CelebrityImageMultiSource: React.FC<CelebrityImageProps> = ({ 
-  name, 
-  similarity, 
-  index, 
+  name,
   size = 48, // Default size
   className = '' 
 }) => {
@@ -226,24 +189,6 @@ export const CelebrityImageMultiSource: React.FC<CelebrityImageProps> = ({
     fetchCelebrityPhoto();
   }, [name]);
 
-  const getColorClass = (index: number) => {
-    const colors = [
-      'bg-gradient-to-br from-green-400 to-green-600',
-      'bg-gradient-to-br from-blue-400 to-blue-600',
-      'bg-gradient-to-br from-purple-400 to-purple-600',
-      'bg-gradient-to-br from-pink-400 to-pink-600',
-      'bg-gradient-to-br from-orange-400 to-orange-600',
-      'bg-gradient-to-br from-red-400 to-red-600',
-      'bg-gradient-to-br from-teal-400 to-teal-600',
-      'bg-gradient-to-br from-indigo-400 to-indigo-600',
-    ];
-    return colors[index % colors.length];
-  };
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
-  };
-
   if (isLoading) {
     return (
       <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center bg-gray-200 animate-pulse ${className}`}>
@@ -268,12 +213,14 @@ export const CelebrityImageMultiSource: React.FC<CelebrityImageProps> = ({
     );
   }
 
-  // Fallback to colored block with initials
+  // Fallback to static anonymous image
   return (
-    <div className={`w-${size} h-${size} rounded-2xl mx-auto mb-4 flex items-center justify-center ${getColorClass(index)} ${className}`}>
-      <span className="text-6xl font-bold text-white">
-        {getInitials(name)}
-      </span>
+    <div className={`w-[${size}px] h-[${size}px] rounded-full overflow-hidden mx-auto mb-4 shadow-inner border ${className}`}>
+      <img
+        src={anonymousImage}
+        alt="anonymous avatar"
+        className="w-full h-full object-cover"
+      />
     </div>
   );
 }; 

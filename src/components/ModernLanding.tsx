@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Users, ArrowRight, Heart, Star, Sparkles, Camera, Zap, Palette, User, Brain } from 'lucide-react';
 import SocialLinks from './SocialLinks';
 import { SignUpButton } from '@clerk/clerk-react';
+import { useTranslation } from 'react-i18next';
 
 // Импортируем наши новые компоненты
 import { GridSection, AnimatedHeader, HowItWorks } from './landing';
@@ -20,6 +21,7 @@ interface FeatureCard {
 }
 
 function ModernLanding() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   // Используем наши новые хуки
   const isScrolled = useScrollEffect(50);
@@ -71,25 +73,25 @@ function ModernLanding() {
 
   const features: FeatureCard[] = [
     {
-      title: "CELEBRITY",
-      description: "Find your celebrity doppelganger",
-      price: "FREE",
+      title: t('landing.features.celebrity.title'),
+      description: t('landing.features.celebrity.description'),
+      price: t('landing.features.celebrity.price'),
       icon: <Star className="w-8 h-8" />,
       gradient: "from-orange-400 to-pink-500",
       textColor: "text-white"
     },
     {
-      title: "SPIRIT ANIMAL",
-      description: "Discover your core animal match",
-      price: "FREE",
+      title: t('landing.features.animal.title'),
+      description: t('landing.features.animal.description'),
+      price: t('landing.features.animal.price'),
       icon: <Sparkles className="w-8 h-8" />,
       gradient: "from-green-400 to-blue-500",
       textColor: "text-white"
     },
     {
-      title: "COLOR & MORE",
-      description: "Core color, gender analysis & more",
-      price: "FREE",
+      title: t('landing.features.color.title'),
+      description: t('landing.features.color.description'),
+      price: t('landing.features.color.price'),
       icon: <Camera className="w-8 h-8" />,
       gradient: "from-purple-400 to-pink-500",
       textColor: "text-white"
@@ -97,9 +99,9 @@ function ModernLanding() {
   ];
 
   const stats = [
-    { number: "10K+", label: "Happy Users" },
-    { number: "98%", label: "Accuracy" },
-    { number: "50K+", label: "Matches Made" }
+    { number: "10K+", label: t('landing.stats.happyUsers') },
+    { number: "98%", label: t('landing.stats.accuracy') },
+    { number: "50K+", label: t('landing.stats.matchesMade') }
   ];
 
   return (
@@ -161,8 +163,8 @@ function ModernLanding() {
           
         <div className="bg-white rounded-lg p-8 text-center">
           <AnimatedHeader 
-            title="Discover Your Digital Twin"
-            subtitle="Our top-rated features to help you explore your identity like never before. See what our community loves the most."
+            title={t('landing.animatedHeader.title')}
+            subtitle={t('landing.animatedHeader.subtitle')}
           />
         </div>
 
@@ -174,9 +176,9 @@ function ModernLanding() {
               {/* Top Picks */}
               <div>
                 <h2 className="text-4xl font-black text-gray-900 mb-8">
-                  TOP-3
+                  {t('landing.topPicks')}
                   <br />
-                  PICKS
+                  {t('landing.picks')}
                 </h2>
                 
                 <div className="space-y-4">
@@ -210,7 +212,7 @@ function ModernLanding() {
 
               {/* Stats Card */}
               <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-3xl p-8 text-white">
-                <h3 className="text-3xl font-black mb-6">TRUSTED BY THOUSANDS</h3>
+                <h3 className="text-3xl font-black mb-6">{t('landing.trustedBy')}</h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                   {stats.map((stat, index) => (
@@ -224,16 +226,16 @@ function ModernLanding() {
                 <div className="bg-white/20 rounded-2xl p-6">
                   <div className="flex items-center space-x-3 mb-4">
                     <Users className="w-6 h-6" />
-                    <span className="font-semibold">Join the community</span>
+                    <span className="font-semibold">{t('landing.joinCommunity')}</span>
                   </div>
                   <p className="text-purple-100 text-sm mb-4">
-                    Connect with others who found their amazing matches
+                    {t('landing.connectWithOthers')}
                   </p>
                   <SignUpButton mode="modal">
                     <button 
                       className="w-full bg-white text-purple-600 font-bold py-3 rounded-xl hover:bg-gray-100 transition-colors"
                     >
-                      GET STARTED
+                      {t('landing.getStarted')}
                     </button>
                   </SignUpButton>
                 </div>
@@ -248,18 +250,16 @@ function ModernLanding() {
         <section className="py-20 bg-gradient-to-r from-crimson to-red-600">
           <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl md:text-6xl font-black text-white mb-6">
-              READY TO FIND
-              <br />
-              YOUR MATCHES?
+              {t('landing.readyToFind')}<br />{t('landing.yourMatches')}
             </h2>
             <p className="text-xl text-red-100 mb-8">
-              Join thousands of users who discovered their celebrity twins, spirit animals, and more
+              {t('landing.joinThousands')}
             </p>
             <button 
               onClick={() => navigate('/dashboard')}
               className="inline-flex items-center px-8 py-4 bg-white text-crimson font-bold rounded-full text-lg hover:shadow-xl transition-shadow duration-200"
             >
-              START NOW - IT'S FREE
+              {t('landing.startNow')}
               <ArrowRight className="ml-2 w-6 h-6" />
             </button>
           </div>
@@ -270,7 +270,7 @@ function ModernLanding() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="flex items-center mb-6 md:mb-0">
-                <span className="text-xl font-bold">Alternity</span>
+                <span className="text-xl font-bold font-fredoka">Alternity</span>
               </div>
               
               <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8">
@@ -281,7 +281,7 @@ function ModernLanding() {
                     tabIndex={0}
                     aria-label="Privacy Policy"
                   >
-                    Privacy
+                    {t('landing.privacy')}
                   </button>
                   <button
                     onClick={() => window.open('#', '_blank')}
@@ -289,7 +289,7 @@ function ModernLanding() {
                     tabIndex={0}
                     aria-label="Terms of Service"
                   >
-                    Terms
+                    {t('landing.terms')}
                   </button>
                   <button
                     onClick={() => window.open('#', '_blank')}
@@ -297,7 +297,7 @@ function ModernLanding() {
                     tabIndex={0}
                     aria-label="Support"
                   >
-                    Support
+                    {t('landing.support')}
                   </button>
                 </div>
                 
@@ -306,7 +306,7 @@ function ModernLanding() {
             </div>
             
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-              <p>&copy; 2025 Alternity. Find your celebrity twin with AI.</p>
+              <p>&copy; 2025 Alternity. {t('landing.footer')}</p>
             </div>
           </div>
         </footer>

@@ -1,0 +1,194 @@
+{
+  "greeting": {
+    "hello": "Hello, {{name}}!"
+  },
+  "home": {
+    "welcome": "Welcome to Alternity"
+  },
+  "dashboard": {
+    "sidebar": {
+      "celebrity": "Celebrity Match",
+      "animal": "Spirit Animal",
+      "color": "Color Analysis",
+      "personality": "16 Personalities",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    },
+    "sections": {
+      "spiritAnimal": "Spirit Animal",
+      "colorAnalysis": "Color Analysis",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    },
+    "celebrity": {
+      "header": "Find Your Celebrity Twin",
+      "subheader": "Ever wondered which celebrity you resemble? Upload your photo and find out!",
+      "dropIt": "Drop it like it's hot!",
+      "uploadPhoto": "Upload Your Photo",
+      "dragDrop": "Drag & drop a file or click to select",
+      "choosePhoto": "Choose Photo",
+      "useWebcam": "Use Webcam",
+      "guidelinesTitle": "For Best Results:",
+      "guidelineClear": "Clear, forward-facing photo",
+      "guidelineLighting": "Good, even lighting",
+      "guidelineGroup": "Avoid group photos",
+      "guidelineFormats": "JPG, PNG, WebP (Max 5MB)",
+      "analyzing": "Analyzing...",
+      "findTwin": "Find Your Twin!"
+    },
+    "color": {
+      "header": "Color Analysis",
+      "subheader": "Find your perfect color palette and seasonal type",
+      "analyzeButton": "Analyze Colors"
+    },
+    "animal": {
+      "header": "Spirit Animal Analysis",
+      "subheader": "Discover your inner animal spirit through AI analysis",
+      "uploadButton": "Upload Photo"
+    },
+    "result": {
+      "title": "Result",
+      "yourPhoto": "Your Photo",
+      "prev": "Previous",
+      "next": "Next",
+      "tryAnother": "Try another photo"
+    },
+    "analytics": {
+      "header": "Analytics Dashboard",
+      "subheader": "View your analysis history and insights",
+      "totalAnalyses": "Total Analyses",
+      "bestMatch": "Best Match Score",
+      "categoriesUsed": "Categories Used"
+    },
+    "settings": {
+      "header": "Settings",
+      "subheader": "Manage your account and preferences",
+      "privacyTitle": "Privacy Settings",
+      "privacyDesc": "Control how your data is used and stored",
+      "notificationsTitle": "Notification Preferences",
+      "notificationsDesc": "Choose how you want to be notified"
+    },
+    "backToHome": "Back to Home",
+    "backToUpload": "Back to Upload",
+    "welcomeBack": "Welcome back, {{name}}!"
+  },
+  "landing": {
+    "features": {
+      "celebrity": {"title": "CELEBRITY", "description": "Find your celebrity doppelganger", "price": "FREE"},
+      "animal": {"title": "SPIRIT ANIMAL", "description": "Discover your core animal match", "price": "FREE"},
+      "color": {"title": "COLOR & MORE", "description": "Core color, gender analysis & more", "price": "FREE"}
+    },
+    "stats": {
+      "happyUsers": "Happy Users",
+      "accuracy": "Accuracy",
+      "matchesMade": "Matches Made"
+    },
+    "topPicks": "TOP-3",
+    "picks": "PICKS",
+    "trustedBy": "TRUSTED BY THOUSANDS",
+    "joinCommunity": "Join the community",
+    "connectWithOthers": "Connect with others who found their amazing matches",
+    "getStarted": "GET STARTED",
+    "readyToFind": "READY TO FIND",
+    "yourMatches": "YOUR MATCHES?",
+    "joinThousands": "Join thousands of users who discovered their celebrity twins, spirit animals, and more",
+    "startNow": "START NOW - IT'S FREE",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "support": "Support",
+    "footer": "Find your celebrity twin with AI.",
+    "animatedHeader": {
+      "title": "Discover Your Digital Twin",
+      "subtitle": "Our top-rated features to help you explore your identity like never before. See what our community loves the most."
+    }
+  },
+  "howItWorks": {
+    "header": "How It Works",
+    "subheader": "A simple, three-step process to unlock a new side of you.",
+    "step1": "Step 1",
+    "title1": "Upload Your Photo",
+    "desc1": "Start by securely uploading a clear photo of yourself to begin the analysis.",
+    "step2": "Step 2",
+    "title2": "AI-Powered Analysis",
+    "desc2": "Our advanced AI analyzes your facial features to find your matches.",
+    "step3": "Step 3",
+    "title3": "Discover Your Matches",
+    "desc3": "Get a detailed report with your celebrity lookalike, spirit animal, and more."
+  },
+  "pricing": {
+    "choosePlan": "Choose Your Plan",
+    "unlockPower": "Unlock the power of AI-driven personality and appearance matching",
+    "mostPopular": "Most Popular",
+    "faq": "Frequently Asked Questions",
+    "faqDesc": "Everything you need to know about our pricing",
+    "cancelAnytime": {"q": "Can I cancel anytime?", "a": "Yes, you can cancel your subscription at any time. No questions asked."},
+    "paymentMethods": {"q": "What payment methods do you accept?", "a": "We accept all major credit cards, PayPal, and Apple Pay."},
+    "dataSecure": {"q": "Is my data secure?", "a": "Absolutely. We use enterprise-grade encryption and never store your photos."},
+    "refunds": {"q": "Do you offer refunds?", "a": "Yes, we offer a 30-day money-back guarantee for all paid plans."},
+    "plans": {
+      "free": {
+        "name": "Free",
+        "period": "forever",
+        "description": "Perfect for trying out our AI matching",
+        "feature1": "Celebrity match",
+        "feature2": "Basic analysis",
+        "feature3": "1 photo per day",
+        "feature4": "Basic results",
+        "buttonText": "Get Started"
+      },
+      "pro": {
+        "name": "Pro",
+        "period": "month",
+        "description": "Enhanced features for better matches",
+        "feature1": "Celebrity match",
+        "feature2": "Spirit animal match",
+        "feature3": "Color analysis",
+        "feature4": "Unlimited photos",
+        "feature5": "Advanced AI analysis",
+        "feature6": "Priority support",
+        "buttonText": "Start Pro"
+      },
+      "premium": {
+        "name": "Premium",
+        "period": "month",
+        "description": "Everything you need for complete analysis",
+        "feature1": "All Pro features",
+        "feature2": "Detailed personality analysis",
+        "feature3": "Custom AI models",
+        "feature4": "Historical data",
+        "feature5": "API access",
+        "feature6": "White-label solution",
+        "buttonText": "Go Premium"
+      }
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "pricing": "Pricing"
+  },
+  "mbti": {
+    "analysisFailed": "Analysis Failed",
+    "couldNotProcess": "We couldn't process your results.",
+    "tryAgain": "Try Again",
+    "strengths": "Strengths",
+    "challenges": "Challenges",
+    "careerPaths": "Career Paths",
+    "famousPeople": "Famous People with this Type",
+    "finalSummary": "Final Summary",
+    "readFullProfile": "Read Full Profile",
+    "takeAgain": "Take Again",
+    "analyzingYourAnswers": "Analyzing your answers...",
+    "pleaseWait": "Please wait a moment.",
+    "testTitle": "16 Personalities Test",
+    "answered": "{{answered}} of {{total}} answered",
+    "disagree": "Disagree",
+    "agree": "Agree",
+    "specifyGender": "Please specify your gender",
+    "male": "Male",
+    "female": "Female",
+    "preferNotToSay": "Prefer not to say",
+    "next": "Next",
+    "analyzing": "Analyzing...",
+    "finishAndSeeResults": "Finish & See Results"
+  }
+}

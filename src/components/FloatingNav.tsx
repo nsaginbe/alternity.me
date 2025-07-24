@@ -4,11 +4,14 @@ import { Button } from '@/components/ui/button';
 import { LayoutDashboard, CreditCard, LogIn, UserPlus, Menu, X } from 'lucide-react';
 import logo from '/src/assets/logo-only-transparent.png';
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/clerk-react';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 export default function FloatingNav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
 
   // Hide FloatingNav on dashboard pages to avoid conflicts
   const isDashboardPage = location.pathname === '/dashboard';
@@ -30,12 +33,12 @@ export default function FloatingNav() {
 
   const navItems = [
     {
-      name: 'Dashboard',
+      name: t('nav.dashboard'),
       href: '/dashboard',
       icon: <LayoutDashboard className="w-4 h-4" />
     },
     {
-      name: 'Pricing',
+      name: t('nav.pricing'),
       href: '/pricing',
       icon: <CreditCard className="w-4 h-4" />
     }
@@ -63,7 +66,7 @@ export default function FloatingNav() {
                 isScrolled ? 'h-7 w-7' : 'h-7 w-7'
               }`}
             />
-            <span className="font-medium text-gray-800 text-lg">
+            <span className="font-medium text-gray-800 text-lg font-fredoka">
               alternity
             </span>
           </Link>
@@ -98,6 +101,7 @@ export default function FloatingNav() {
           <div className={`hidden md:flex items-center flex-shrink-0 transition-all duration-500 ease-out ${
             isScrolled ? 'space-x-2' : 'space-x-3'
           }`}>
+            <LanguageSwitcher />
             <SignedIn>
               <div className="transform scale-120">
                 <UserButton afterSignOutUrl="/" />

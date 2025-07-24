@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;700&family=Nunito:wght@400;600;700&&family=Rubik:wght@400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -96,4 +98,11 @@
   transform: translateX(-100%);
   z-index: 1;
   opacity: 0.6;
+}
+
+.font-fredoka {
+  font-family: 'Fredoka', Arial, sans-serif;
+}
+.font-nunito {
+  font-family: 'Rubik', Arial, sans-serif;
 }

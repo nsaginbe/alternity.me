@@ -36,6 +36,8 @@ import { CelebrityMatchCard } from './CelebrityMatchCard';
 import logoOnly from '/src/assets/logo-only-transparent.png';
 import MBTIQuiz from './MBTIQuiz';
 import imageCompression from "browser-image-compression";
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 type DashboardSection = 'celebrity' | 'animal' | 'color' | 'personality' | 'analytics' | 'settings';
 
@@ -48,26 +50,10 @@ interface ApiResponse extends Array<CelebrityMatch> {}
 
 
 
-// Development Badge Component (less intrusive)
-const DevelopmentBadge = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="relative">
-      {children}
-
-      {/* Small development badge in top-right corner */}
-      <div className="absolute top-4 right-4 z-10">
-        <div className="bg-amber-100 border border-amber-300 rounded-full px-3 py-1 shadow-sm">
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-            <span className="text-xs font-semibold text-amber-700">COMING SOON</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+// Removed DevelopmentBadge and all 'COMING SOON' badges/usages
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeSection, setActiveSection] = useState<DashboardSection>('celebrity');
 
@@ -259,12 +245,12 @@ export default function Dashboard() {
   };
 
   const sidebarItems = [
-    { id: 'celebrity', label: 'Celebrity Match', icon: Star, color: 'text-yellow-600' },
-    { id: 'animal', label: 'Spirit Animal', icon: Sparkles, color: 'text-emerald-600' },
-    { id: 'color', label: 'Color Analysis', icon: Palette, color: 'text-pink-600' },
-    { id: 'personality', label: '16 Personalities', icon: Eye, color: 'text-blue-600' },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3, color: 'text-indigo-600' },
-    { id: 'settings', label: 'Settings', icon: Settings, color: 'text-gray-600' }
+    { id: 'celebrity', label: t('dashboard.sidebar.celebrity'), icon: Star, color: 'text-yellow-600' },
+    { id: 'animal', label: t('dashboard.sidebar.animal'), icon: Sparkles, color: 'text-emerald-600' },
+    { id: 'color', label: t('dashboard.sidebar.color'), icon: Palette, color: 'text-pink-600' },
+    { id: 'personality', label: t('dashboard.sidebar.personality'), icon: Eye, color: 'text-blue-600' },
+    { id: 'analytics', label: t('dashboard.sidebar.analytics'), icon: BarChart3, color: 'text-indigo-600' },
+    { id: 'settings', label: t('dashboard.sidebar.settings'), icon: Settings, color: 'text-gray-600' }
   ];
 
   const handleSectionChange = (section: DashboardSection) => {
@@ -396,10 +382,10 @@ export default function Dashboard() {
           {/* Main Header */}
           <div className="text-center mb-8">
             <h2 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
-              Find Your Celebrity Twin
+              {t('dashboard.celebrity.header')}
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Ever wondered which celebrity you resemble? Upload your photo and find out!
+              {t('dashboard.celebrity.subheader')}
             </p>
           </div>
 
@@ -436,7 +422,7 @@ export default function Dashboard() {
                         <X className="w-5 h-5" />
                       </button>
                       <h3 className="text-xl font-semibold text-gray-800">
-                        {uploadedFile?.name || 'Your Photo'}
+                        {uploadedFile?.name || t('dashboard.result.yourPhoto')}
                       </h3>
                       <p className="text-sm text-gray-500">
                         {uploadedFile ? `${(uploadedFile.size / 1024 / 1024).toFixed(2)} MB` : ''}
@@ -448,10 +434,10 @@ export default function Dashboard() {
                         <Upload className="w-12 h-12 text-violet-500" />
                       </div>
                       <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                        {isDragging ? "Drop it like it's hot!" : "Upload Your Photo"}
+                        {isDragging ? t('dashboard.celebrity.dropIt') : t('dashboard.celebrity.uploadPhoto')}
                       </h3>
                       <p className="text-gray-600">
-                        Drag & drop a file or click to select
+                        {t('dashboard.celebrity.dragDrop')}
                       </p>
                     </>
                   )}
@@ -467,7 +453,7 @@ export default function Dashboard() {
                       disabled={isProcessing}
                     >
                       <Upload className="w-6 h-6 mr-3" />
-                      Choose Photo
+                      {t('dashboard.celebrity.choosePhoto')}
                     </Button>
                     <Button
                       onClick={handleUseWebcam}
@@ -475,18 +461,18 @@ export default function Dashboard() {
                       disabled={isProcessing}
                     >
                       <Camera className="w-6 h-6 mr-3" />
-                      Use Webcam
+                      {t('dashboard.celebrity.useWebcam')}
                     </Button>
                   </div>
 
                   {/* Guidelines */}
                   <div className="p-6 bg-violet-100 rounded-xl border border-violet-200">
-                    <h4 className="font-bold text-violet-900 mb-3 text-lg">For Best Results:</h4>
+                    <h4 className="font-bold text-violet-900 mb-3 text-lg">{t('dashboard.celebrity.guidelinesTitle')}</h4>
                     <ul className="text-base text-violet-700 space-y-3">
-                      <li className="flex items-center"><Check className="w-5 h-5 mr-3 text-green-500 flex-shrink-0" /> Clear, forward-facing photo</li>
-                      <li className="flex items-center"><Sun className="w-5 h-5 mr-3 text-yellow-500 flex-shrink-0" /> Good, even lighting</li>
-                      <li className="flex items-center"><Users className="w-5 h-5 mr-3 text-red-500 flex-shrink-0" /> Avoid group photos</li>
-                      <li className="flex items-center"><FileImage className="w-5 h-5 mr-3 text-blue-500 flex-shrink-0" /> JPG, PNG, WebP (Max 5MB)</li>
+                      <li className="flex items-center"><Check className="w-5 h-5 mr-3 text-green-500 flex-shrink-0" /> {t('dashboard.celebrity.guidelineClear')}</li>
+                      <li className="flex items-center"><Sun className="w-5 h-5 mr-3 text-yellow-500 flex-shrink-0" /> {t('dashboard.celebrity.guidelineLighting')}</li>
+                      <li className="flex items-center"><Users className="w-5 h-5 mr-3 text-red-500 flex-shrink-0" /> {t('dashboard.celebrity.guidelineGroup')}</li>
+                      <li className="flex items-center"><FileImage className="w-5 h-5 mr-3 text-blue-500 flex-shrink-0" /> {t('dashboard.celebrity.guidelineFormats')}</li>
                     </ul>
                   </div>
                 </div>
@@ -505,12 +491,12 @@ export default function Dashboard() {
                 {isProcessing ? (
                   <>
                     <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
-                    Analyzing...
+                    {t('dashboard.celebrity.analyzing')}
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-6 h-6 mr-3" />
-                    Find Your Twin!
+                    {t('dashboard.celebrity.findTwin')}
                   </>
                 )}
               </Button>
@@ -547,7 +533,7 @@ export default function Dashboard() {
               className="h-20 border-2 border-gray-300 hover:border-violet-500 hover:text-violet-600 text-lg font-semibold rounded-2xl"
             >
               <ChevronLeft className="w-6 h-6 mr-3" />
-              Back to Upload
+              {t('dashboard.backToUpload')}
             </Button>
             <Button
               onClick={handleAnalyzeCapturedPhoto}
@@ -632,7 +618,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
             <Sparkles className="w-8 h-8 text-purple-600" />
-            <h2 className="text-3xl font-bold text-gray-900">Result</h2>
+            <h2 className="text-3xl font-bold text-gray-900">{t('dashboard.result.title')}</h2>
           </div>
           {celebrityMatches.length > 0 && (
             <div className="bg-teal-100 rounded-full px-4 py-2 text-sm font-medium text-teal-700">
@@ -664,7 +650,7 @@ export default function Dashboard() {
                   variant="outline"
                 >
                   <ChevronLeft className="w-4 h-4 mr-2" />
-                  Try another photo
+                  {t('dashboard.result.tryAnother')}
                 </Button>
               </div>
             </>
@@ -683,87 +669,79 @@ export default function Dashboard() {
         return renderCelebritySection();
       case 'animal':
         return (
-          <DevelopmentBadge>
-            <div className="max-w-4xl mx-auto text-center">
-              <Sparkles className="w-16 h-16 text-emerald-600 mx-auto mb-6" />
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Spirit Animal Analysis</h2>
-              <p className="text-gray-600 mb-8">Discover your inner animal spirit through AI analysis</p>
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Photo
-              </Button>
-            </div>
-          </DevelopmentBadge>
+          <div className="max-w-4xl mx-auto text-center">
+            <Sparkles className="w-16 h-16 text-emerald-600 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('dashboard.spiritAnimalAnalysis')}</h2>
+            <p className="text-gray-600 mb-8">{t('dashboard.animal.subheader')}</p>
+            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Upload className="w-4 h-4 mr-2" />
+              {t('dashboard.animal.uploadButton')}
+            </Button>
+          </div>
         );
       case 'color':
         return (
-          <DevelopmentBadge>
-            <div className="max-w-4xl mx-auto text-center">
-              <Palette className="w-16 h-16 text-pink-600 mx-auto mb-6" />
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Color Analysis</h2>
-              <p className="text-gray-600 mb-8">Find your perfect color palette and seasonal type</p>
-              <Button className="bg-pink-600 hover:bg-pink-700 text-white">
-                <Upload className="w-4 h-4 mr-2" />
-                Analyze Colors
-              </Button>
-            </div>
-          </DevelopmentBadge>
+          <div className="max-w-4xl mx-auto text-center">
+            <Palette className="w-16 h-16 text-pink-600 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('dashboard.color.header')}</h2>
+            <p className="text-gray-600 mb-8">{t('dashboard.color.subheader')}</p>
+            <Button className="bg-pink-600 hover:bg-pink-700 text-white">
+              <Upload className="w-4 h-4 mr-2" />
+              {t('dashboard.color.analyzeButton')}
+            </Button>
+          </div>
         );
       case 'personality':
         return <MBTIQuiz />;
       case 'analytics':
         return (
-          <DevelopmentBadge>
-            <div className="max-w-4xl mx-auto text-center">
-              <BarChart3 className="w-16 h-16 text-indigo-600 mx-auto mb-6" />
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Analytics Dashboard</h2>
-              <p className="text-gray-600 mb-8">View your analysis history and insights</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card>
-                  <CardContent className="p-6 text-center">
-                    <h3 className="text-2xl font-bold text-gray-900">12</h3>
-                    <p className="text-gray-600">Total Analyses</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-6 text-center">
-                    <h3 className="text-2xl font-bold text-gray-900">87%</h3>
-                    <p className="text-gray-600">Best Match Score</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-6 text-center">
-                    <h3 className="text-2xl font-bold text-gray-900">4</h3>
-                    <p className="text-gray-600">Categories Used</p>
-                  </CardContent>
-                </Card>
-              </div>
+          <div className="max-w-4xl mx-auto text-center">
+            <BarChart3 className="w-16 h-16 text-indigo-600 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('dashboard.analytics.header')}</h2>
+            <p className="text-gray-600 mb-8">{t('dashboard.analytics.subheader')}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-2xl font-bold text-gray-900">12</h3>
+                  <p className="text-gray-600">{t('dashboard.analytics.totalAnalyses')}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-2xl font-bold text-gray-900">87%</h3>
+                  <p className="text-gray-600">{t('dashboard.analytics.bestMatch')}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-2xl font-bold text-gray-900">4</h3>
+                  <p className="text-gray-600">{t('dashboard.analytics.categoriesUsed')}</p>
+                </CardContent>
+              </Card>
             </div>
-          </DevelopmentBadge>
+          </div>
         );
       case 'settings':
         return (
-          <DevelopmentBadge>
-            <div className="max-w-4xl mx-auto text-center">
-              <Settings className="w-16 h-16 text-gray-600 mx-auto mb-6" />
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Settings</h2>
-              <p className="text-gray-600 mb-8">Manage your account and preferences</p>
-              <div className="space-y-4 text-left">
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold text-gray-900 mb-2">Privacy Settings</h3>
-                    <p className="text-gray-600">Control how your data is used and stored</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold text-gray-900 mb-2">Notification Preferences</h3>
-                    <p className="text-gray-600">Choose how you want to be notified</p>
-                  </CardContent>
-                </Card>
-              </div>
+          <div className="max-w-4xl mx-auto text-center">
+            <Settings className="w-16 h-16 text-gray-600 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('dashboard.settings.header')}</h2>
+            <p className="text-gray-600 mb-8">{t('dashboard.settings.subheader')}</p>
+            <div className="space-y-4 text-left">
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-gray-900 mb-2">{t('dashboard.settings.privacyTitle')}</h3>
+                  <p className="text-gray-600">{t('dashboard.settings.privacyDesc')}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-gray-900 mb-2">{t('dashboard.settings.notificationsTitle')}</h3>
+                  <p className="text-gray-600">{t('dashboard.settings.notificationsDesc')}</p>
+                </CardContent>
+              </Card>
             </div>
-          </DevelopmentBadge>
+          </div>
         );
       default:
         return renderCelebritySection();
@@ -813,7 +791,7 @@ export default function Dashboard() {
               className="h-7"
             />
             {isSidebarOpen && (
-              <span className="ml-2 text-xl text-gray-900">alternity</span>
+              <span className="ml-2 text-xl text-gray-900 font-fredoka">alternity</span>
             )}
           </div>
           {isSidebarOpen && (
@@ -874,7 +852,7 @@ export default function Dashboard() {
                   className="w-full justify-start text-gray-500 hover:text-red-600 hover:bg-red-50"
                 >
                   <ChevronLeft className="w-4 h-4 mr-2" />
-                  Back to Home
+                  {t('dashboard.backToHome')}
                 </Button>
               </Link>
             </div>
@@ -900,8 +878,9 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center space-x-3">
+            <LanguageSwitcher />
             <div className="text-md text-gray-500">
-              Welcome back, {user?.firstName || user?.fullName || 'User'}
+              {t('dashboard.welcomeBack', { name: user?.firstName || user?.fullName || 'User' })}
             </div>
           </div>
         </div>
