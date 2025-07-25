@@ -56,7 +56,7 @@ const getQuestionsByLang = (lang: string): Question[] => {
 const MBTIQuiz = () => {
   const { t, i18n } = useTranslation();
   const [lang, setLang] = useState(i18n.language);
-  const [questions, setQuestions] = useState<Question[]>(getQuestionsByLang(i18n.language));
+  const [questions, setQuestions] = useState<Question[]>(getQuestionsByLang(i18n.language).slice(0, 20));
   const [currentPage, setCurrentPage] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [gender, setGender] = useState<string | undefined>(undefined);
@@ -66,7 +66,7 @@ const MBTIQuiz = () => {
 
   useEffect(() => {
     if (i18n.language !== lang) {
-      setQuestions(getQuestionsByLang(i18n.language));
+      setQuestions(getQuestionsByLang(i18n.language).slice(0, 20));
       setAnswers({});
       setCurrentPage(0);
       setGender(undefined);
