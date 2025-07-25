@@ -18,7 +18,6 @@ if (!PUBLISHABLE_KEY) {
 function AppContent() {
 
   const { t, i18n } = useTranslation();
-  console.log(t("greeting.hello", { name: "John" }));
 
   useEffect(() => {
     document.body.classList.remove('font-fredoka', 'font-nunito');

@@ -671,7 +671,7 @@ export default function Dashboard() {
         return (
           <div className="max-w-4xl mx-auto text-center">
             <Sparkles className="w-16 h-16 text-emerald-600 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('dashboard.spiritAnimalAnalysis')}</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('dashboard.animal.header')}</h2>
             <p className="text-gray-600 mb-8">{t('dashboard.animal.subheader')}</p>
             <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
               <Upload className="w-4 h-4 mr-2" />
