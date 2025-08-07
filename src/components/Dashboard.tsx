@@ -11,16 +11,11 @@ import {
   Star,
   Sparkles,
   Palette,
-  User as UserIcon,
+  Heart, // Changed from User as UserIcon to Heart
   Upload,
   Camera,
   BarChart3,
-  Heart,
   Eye,
-  Brain,
-  Target,
-  Settings,
-  LogOut,
   ChevronLeft,
   ChevronRight,
   X,
@@ -31,6 +26,8 @@ import {
   Sun,
   Users,
   FileImage,
+  Settings,
+  LogOut,
 } from 'lucide-react';
 import { CelebrityMatchCard } from './CelebrityMatchCard';
 import logoOnly from '/src/assets/logo-only-transparent.png';
@@ -39,7 +36,7 @@ import imageCompression from "browser-image-compression";
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 
-type DashboardSection = 'celebrity' | 'animal' | 'color' | 'personality' | 'analytics' | 'settings';
+type DashboardSection = 'celebrity' | 'animal' | 'color' | 'personality' | 'analytics' | 'settings' | 'gender';
 
 interface CelebrityMatch {
   name: string;
@@ -56,6 +53,12 @@ interface ColorAnalysisResult {
   mood_name: string;
   description: string;
   palette: string[];
+}
+
+interface GenderAnalysisResult {
+  gender: string;
+  orientation: string;
+  confidence: number;
 }
 
 interface ApiResponse extends Array<CelebrityMatch> {}
@@ -78,6 +81,7 @@ export default function Dashboard() {
   const [celebrityMatches, setCelebrityMatches] = useState<CelebrityMatch[]>([]);
   const [spiritAnimalResult, setSpiritAnimalResult] = useState<SpiritAnimalResult | null>(null);
   const [colorResult, setColorResult] = useState<ColorAnalysisResult | null>(null);
+  const [genderResult, setGenderResult] = useState<GenderAnalysisResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null); // This will be removed
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
@@ -174,12 +178,25 @@ export default function Dashboard() {
     }
   };
 
+  const getRandomGenderResult = (): GenderAnalysisResult => {
+    const genders = [
+      'Гетеросексуальный', 'Гомосексуальный', 'Бисексуальный', 'Пансексуальный',
+      'Асексуальный', 'Демисексуальный', 'Квир', 'Гомо-романтический',
+      'Гетеро-романтический', 'Би-романтический', 'Пан-романтический', 'Аро-романтический',
+      'Флюид', 'Интерсексуальный', 'Неопределённый', 'Экспериментирующий'
+    ];
+    const orientation = genders[Math.floor(Math.random() * genders.length)];
+    const confidence = Math.floor(Math.random() * 26) + 75; // 75-100
+    const genderLabel = Math.random() < 0.5 ? 'Мужчина' : 'Женщина';
+    return { gender: genderLabel, orientation, confidence };
+  };
+
   const analyzeColorPalette = async (base64ImageData: string): Promise<ColorAnalysisResult> => {
-    const apiUrl = 'http://localhost:5001/api/analyze_color'; // Using fixed URL for now
-    console.log(`🎨 Starting API call to ${apiUrl}`);
+    const apiUrl = import.meta.env.VITE_CATEGORY_BACK_API_URL;
+    console.log(`🎨 Starting API call to ${apiUrl}/color`);
 
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(`${apiUrl}/color`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -319,6 +336,9 @@ export default function Dashboard() {
       } else if (activeSection === 'color') {
         const result = await analyzeColorPalette(base64Data);
         setColorResult(result);
+      } else if (activeSection === 'gender') {
+        const result = getRandomGenderResult();
+        setGenderResult(result);
       }
       
       setUploadMode('results');
@@ -350,6 +370,7 @@ export default function Dashboard() {
     setCelebrityMatches([]);
     setSpiritAnimalResult(null);
     setColorResult(null);
+    setGenderResult(null);
     setUploadedFile(null);
     setCapturedImage(null);
     setCurrentMatchIndex(0);
@@ -428,6 +449,9 @@ export default function Dashboard() {
         } else if (activeSection === 'color') {
           const result = await analyzeColorPalette(base64Data);
           setColorResult(result);
+        } else if (activeSection === 'gender') {
+          const result = getRandomGenderResult();
+          setGenderResult(result);
         }
 
         console.log('🔄 Step 3: Processing results...');
@@ -540,6 +564,83 @@ export default function Dashboard() {
     return renderCelebritySection();
   }
 
+  const renderGenderSection = () => {
+    if (uploadMode === 'results' && genderResult) {
+      return (
+        <div className="max-w-4xl mx-auto text-center">
+          <Card className="shadow-2xl rounded-2xl overflow-hidden">
+            <CardContent className="p-0">
+              <div className="grid grid-cols-1 md:grid-cols-2">
+                {/* User Photo Column */}
+                <div className="p-10 bg-gray-50 flex flex-col justify-center items-center">
+                  <img
+                    src={previewUrl || capturedImage || ''}
+                    alt={t('dashboard.result.yourPhoto')}
+                    className="w-64 h-64 md:w-72 md:h-72 rounded-full object-cover shadow-xl border-4 border-white"
+                  />
+                  <h3 className="mt-6 text-xl md:text-2xl font-semibold text-gray-800">{t('dashboard.result.yourPhoto')}</h3>
+                </div>
+
+                {/* Analysis Column */}
+                <div className="bg-gradient-to-br from-fuchsia-500 via-violet-600 to-indigo-600 text-white p-8 md:p-12 flex flex-col justify-center">
+                  {/* Primary accent: Gender */}
+                  <div className="flex flex-col items-center text-center">
+                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight drop-shadow">
+                      {genderResult.orientation}
+                    </h1>
+                    <span className="mt-4 inline-flex items-center rounded-full bg-white/15 px-5 py-1.5 text-sm md:text-base font-semibold">
+                      {genderResult.gender}
+                    </span>
+                  </div>
+
+                  {/* Secondary accent: Percentage */}
+                  <div className="mt-8 md:mt-10 flex items-center justify-center">
+                    <div className="relative w-48 h-48 md:w-56 md:h-56">
+                      <svg className="w-full h-full" viewBox="0 0 36 36">
+                        <path
+                          className="text-indigo-300/35"
+                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none" stroke="currentColor" strokeWidth="4"
+                        />
+                        <path
+                          className="text-pink-300"
+                          strokeDasharray={`${genderResult.confidence}, 100`}
+                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-5xl md:text-6xl font-extrabold">{genderResult.confidence}%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* No description per new requirements */}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <div className="mt-8 text-center">
+            <Button
+              onClick={() => {
+                setUploadMode('upload');
+                handleRemoveFile();
+                setGenderResult(null);
+              }}
+              variant="outline"
+              size="lg"
+              className="bg-white/20 hover:bg-white/30 border-white text-white"
+            >
+              <ChevronLeft className="w-5 h-5 mr-2" />
+              {t('dashboard.result.tryAnother')}
+            </Button>
+          </div>
+        </div>
+      );
+    }
+    return renderCelebritySection();
+  }
+
   const renderColorSection = () => {
     if (uploadMode === 'results' && colorResult) {
       return (
@@ -591,6 +692,7 @@ export default function Dashboard() {
   const renderCelebritySection = () => {
     const isAnimalSection = activeSection === 'animal';
     const isColorSection = activeSection === 'color';
+    const isGenderSection = activeSection === 'gender';
 
     if (uploadMode === 'upload') {
       return (
@@ -602,6 +704,8 @@ export default function Dashboard() {
                 ? t('dashboard.animal.header') 
                 : isColorSection 
                 ? t('dashboard.color.header')
+                : isGenderSection
+                ? t('dashboard.gender.header')
                 : t('dashboard.celebrity.header')}
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -609,6 +713,8 @@ export default function Dashboard() {
                 ? t('dashboard.animal.subheader') 
                 : isColorSection
                 ? t('dashboard.color.subheader')
+                : isGenderSection
+                ? t('dashboard.gender.subheader')
                 : t('dashboard.celebrity.subheader')}
             </p>
           </div>
@@ -724,6 +830,8 @@ export default function Dashboard() {
                       ? t('dashboard.animal.findAnimal') 
                       : isColorSection
                       ? t('dashboard.color.analyzeButton')
+                      : isGenderSection
+                      ? t('dashboard.gender.analyzeButton')
                       : t('dashboard.celebrity.findTwin')}
                   </>
                 )}
@@ -899,6 +1007,8 @@ export default function Dashboard() {
         return renderAnimalSection();
       case 'color':
         return renderColorSection();
+      case 'gender':
+        return renderGenderSection();
       case 'personality':
         return <MBTIQuiz />;
       case 'analytics':

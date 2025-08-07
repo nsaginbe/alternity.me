@@ -41,6 +41,14 @@
       "subheader": "Discover the unique mood and palette of your image.",
       "analyzeButton": "Analyze Colors"
     },
+    "gender": {
+      "header": "Gender Analysis",
+      "subheader": "Find out what our AI thinks based on your photo.",
+      "analyzeButton": "Analyze Gender",
+      "resultTitle": "AI Verdict",
+      "basedOnPhoto": "Detected Gender",
+      "orientation": "Inferred Inclination"
+    },
     "animal": {
       "header": "Discover Your Spirit Animal",
       "subheader": "Upload your photo to find out which animal represents your inner self.",
