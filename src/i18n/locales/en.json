@@ -37,8 +37,8 @@
       "findTwin": "Find Your Twin!"
     },
     "color": {
-      "header": "Color Analysis",
-      "subheader": "Find your perfect color palette and seasonal type",
+      "header": "Analyze Your Photo's Colors",
+      "subheader": "Discover the unique mood and palette of your image.",
       "analyzeButton": "Analyze Colors"
     },
     "animal": {

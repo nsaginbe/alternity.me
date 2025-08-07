@@ -52,6 +52,12 @@ interface SpiritAnimalResult {
   imageUrl?: string;
 }
 
+interface ColorAnalysisResult {
+  mood_name: string;
+  description: string;
+  palette: string[];
+}
+
 interface ApiResponse extends Array<CelebrityMatch> {}
 
 
@@ -71,6 +77,7 @@ export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Closed by default for mobile
   const [celebrityMatches, setCelebrityMatches] = useState<CelebrityMatch[]>([]);
   const [spiritAnimalResult, setSpiritAnimalResult] = useState<SpiritAnimalResult | null>(null);
+  const [colorResult, setColorResult] = useState<ColorAnalysisResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null); // This will be removed
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
@@ -163,6 +170,35 @@ export default function Dashboard() {
         console.error('❌ Network error - API server may not be running');
         throw new Error(`Cannot connect to API server`);
       }
+      throw error;
+    }
+  };
+
+  const analyzeColorPalette = async (base64ImageData: string): Promise<ColorAnalysisResult> => {
+    const apiUrl = 'http://localhost:5001/api/analyze_color'; // Using fixed URL for now
+    console.log(`🎨 Starting API call to ${apiUrl}`);
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image: base64ImageData })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      if (!data.mood_name || !data.description || !data.palette) {
+        throw new Error('Invalid response format from color analysis API.');
+      }
+      return data;
+    } catch (error) {
+      console.error('❌ Error calling color analysis API:', error);
       throw error;
     }
   };
@@ -280,6 +316,9 @@ export default function Dashboard() {
       } else if (activeSection === 'animal') {
         const result = await findSpiritAnimal(base64Data);
         setSpiritAnimalResult(result);
+      } else if (activeSection === 'color') {
+        const result = await analyzeColorPalette(base64Data);
+        setColorResult(result);
       }
       
       setUploadMode('results');
@@ -310,6 +349,7 @@ export default function Dashboard() {
     setUploadMode('upload');
     setCelebrityMatches([]);
     setSpiritAnimalResult(null);
+    setColorResult(null);
     setUploadedFile(null);
     setCapturedImage(null);
     setCurrentMatchIndex(0);
@@ -385,6 +425,9 @@ export default function Dashboard() {
         } else if (activeSection === 'animal') {
           const result = await findSpiritAnimal(base64Data);
           setSpiritAnimalResult(result);
+        } else if (activeSection === 'color') {
+          const result = await analyzeColorPalette(base64Data);
+          setColorResult(result);
         }
 
         console.log('🔄 Step 3: Processing results...');
@@ -497,8 +540,57 @@ export default function Dashboard() {
     return renderCelebritySection();
   }
 
+  const renderColorSection = () => {
+    if (uploadMode === 'results' && colorResult) {
+      return (
+        <div className="max-w-4xl mx-auto">
+          <Card className="shadow-2xl rounded-2xl overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="p-8 md:p-12">
+                <Palette className="w-12 h-12 text-pink-500 mb-4" />
+                <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight">{colorResult.mood_name}</h2>
+                <p className="mt-4 text-gray-600 text-lg">{colorResult.description}</p>
+                <div className="mt-8">
+                  <h4 className="font-semibold text-gray-700 mb-3">Dominant Colors:</h4>
+                  <div className="flex space-x-3">
+                    {colorResult.palette.map((color, index) => (
+                      <div key={index} className="w-16 h-16 rounded-full shadow-inner border-2 border-white" style={{ backgroundColor: color }} title={color} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="min-h-[300px] md:min-h-0">
+                <img
+                  src={previewUrl || capturedImage || ''}
+                  alt="Analyzed"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </Card>
+           <div className="mt-8 text-center">
+            <Button
+              onClick={() => {
+                setUploadMode('upload');
+                handleRemoveFile();
+                setColorResult(null);
+              }}
+              variant="outline"
+              size="lg"
+            >
+              <ChevronLeft className="w-5 h-5 mr-2" />
+              {t('dashboard.result.tryAnother')}
+            </Button>
+          </div>
+        </div>
+      );
+    }
+    return renderCelebritySection();
+  };
+
   const renderCelebritySection = () => {
     const isAnimalSection = activeSection === 'animal';
+    const isColorSection = activeSection === 'color';
 
     if (uploadMode === 'upload') {
       return (
@@ -506,10 +598,18 @@ export default function Dashboard() {
           {/* Main Header */}
           <div className="text-center mb-8">
             <h2 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
-              {isAnimalSection ? t('dashboard.animal.header') : t('dashboard.celebrity.header')}
+              {isAnimalSection 
+                ? t('dashboard.animal.header') 
+                : isColorSection 
+                ? t('dashboard.color.header')
+                : t('dashboard.celebrity.header')}
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              {isAnimalSection ? t('dashboard.animal.subheader') : t('dashboard.celebrity.subheader')}
+              {isAnimalSection 
+                ? t('dashboard.animal.subheader') 
+                : isColorSection
+                ? t('dashboard.color.subheader')
+                : t('dashboard.celebrity.subheader')}
             </p>
           </div>
 
@@ -620,7 +720,11 @@ export default function Dashboard() {
                 ) : (
                   <>
                     <Sparkles className="w-6 h-6 mr-3" />
-                    {isAnimalSection ? t('dashboard.animal.findAnimal') : t('dashboard.celebrity.findTwin')}
+                    {isAnimalSection 
+                      ? t('dashboard.animal.findAnimal') 
+                      : isColorSection
+                      ? t('dashboard.color.analyzeButton')
+                      : t('dashboard.celebrity.findTwin')}
                   </>
                 )}
               </Button>
@@ -794,17 +898,7 @@ export default function Dashboard() {
       case 'animal':
         return renderAnimalSection();
       case 'color':
-        return (
-          <div className="max-w-4xl mx-auto text-center">
-            <Palette className="w-16 h-16 text-pink-600 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('dashboard.color.header')}</h2>
-            <p className="text-gray-600 mb-8">{t('dashboard.color.subheader')}</p>
-            <Button className="bg-pink-600 hover:bg-pink-700 text-white">
-              <Upload className="w-4 h-4 mr-2" />
-              {t('dashboard.color.analyzeButton')}
-            </Button>
-          </div>
-        );
+        return renderColorSection();
       case 'personality':
         return <MBTIQuiz />;
       case 'analytics':
