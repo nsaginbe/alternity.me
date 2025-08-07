@@ -42,13 +42,14 @@
       "analyzeButton": "Analyze Colors"
     },
     "animal": {
-      "header": "Spirit Animal Analysis",
-      "subheader": "Discover your inner animal spirit through AI analysis",
-      "uploadButton": "Upload Photo"
+      "header": "Discover Your Spirit Animal",
+      "subheader": "Upload your photo to find out which animal represents your inner self.",
+      "findAnimal": "Reveal My Spirit Animal"
     },
     "result": {
-      "title": "Result",
+      "title": "Here's Your Match!",
       "yourPhoto": "Your Photo",
+      "yourSpiritAnimal": "Your Spirit Animal",
       "prev": "Previous",
       "next": "Next",
       "tryAnother": "Try another photo"

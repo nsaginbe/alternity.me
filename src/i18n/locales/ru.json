@@ -22,13 +22,13 @@
       "dragDrop": "Перетащи файл или кликни для выбора",
       "choosePhoto": "Выбрать фото",
       "useWebcam": "Использовать веб-камеру",
-      "guidelinesTitle": "Для лучшего результата:",
-      "guidelineClear": "Четкое фото",
-      "guidelineLighting": "Хорошее, ровное освещение",
-      "guidelineGroup": "Избегайте групповых фото",
-      "guidelineFormats": "JPG, PNG, WebP (до 5МБ)",
-      "analyzing": "Анализируем...",
-      "findTwin": "Найти двойника!"
+      "guidelinesTitle": "Требования к фото",
+      "guidelineClear": "Четкое фото анфас.",
+      "guidelineLighting": "Хорошее, ровное освещение.",
+      "guidelineGroup": "Пожалуйста, без групповых фото.",
+      "guidelineFormats": "Форматы JPG, PNG или WebP.",
+      "analyzing": "Анализирую...",
+      "findTwin": "Найти моего двойника!"
     },
     "color": {
       "header": "Анализ цвета",
@@ -36,9 +36,9 @@
       "analyzeButton": "Анализировать цвета"
     },
     "animal": {
-      "header": "Анализ духовного животного",
-      "subheader": "Узнайте своё духовное животное с помощью ИИ",
-      "uploadButton": "Загрузить фото"
+      "header": "Узнайте свое духовное животное",
+      "subheader": "Загрузите фото, чтобы узнать, какое животное отражает вашу сущность.",
+      "findAnimal": "Узнать мое животное"
     },
     "analytics": {
       "header": "Аналитика",
@@ -62,8 +62,9 @@
       "settings": "Настройки"
     },
     "result": {
-      "title": "Результат",
+      "title": "Вот ваш результат!",
       "yourPhoto": "Ваше фото",
+      "yourSpiritAnimal": "Ваше духовное животное",
       "prev": "Назад",
       "next": "Вперёд",
       "tryAnother": "Попробовать другое фото"

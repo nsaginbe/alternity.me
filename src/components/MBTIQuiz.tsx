@@ -114,8 +114,8 @@ const MBTIQuiz = () => {
     }));
 
     try {
-      const apiUrl = import.meta.env.VITE_MBTI_BACK_API_URL;
-      const response = await fetch(`${apiUrl}/analyse`, {
+      const apiUrl = import.meta.env.VITE_CATEGORY_BACK_API_URL;
+      const response = await fetch(`${apiUrl}/mbti`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

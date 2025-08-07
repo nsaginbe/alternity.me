@@ -46,6 +46,12 @@ interface CelebrityMatch {
   similarity: number;
 }
 
+interface SpiritAnimalResult {
+  animal: string;
+  reason: string;
+  imageUrl?: string;
+}
+
 interface ApiResponse extends Array<CelebrityMatch> {}
 
 
@@ -64,6 +70,7 @@ export default function Dashboard() {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Closed by default for mobile
   const [celebrityMatches, setCelebrityMatches] = useState<CelebrityMatch[]>([]);
+  const [spiritAnimalResult, setSpiritAnimalResult] = useState<SpiritAnimalResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null); // This will be removed
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
@@ -122,6 +129,42 @@ export default function Dashboard() {
       };
       reader.readAsDataURL(file);
     });
+  };
+
+  const findSpiritAnimal = async (base64ImageData: string): Promise<SpiritAnimalResult> => {
+    const apiUrl = import.meta.env.VITE_CATEGORY_BACK_API_URL;
+    console.log(`🦁 Starting API call to ${apiUrl}/animal`);
+
+    try {
+      const response = await fetch(`${apiUrl}/animal`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image: base64ImageData })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Error response:', errorText);
+        throw new Error(`API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ API Response data:', data);
+      
+      if (!data.animal || !data.reason) {
+        throw new Error('Invalid response format from server.');
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        console.error('❌ Network error - API server may not be running');
+        throw new Error(`Cannot connect to API server`);
+      }
+      throw error;
+    }
   };
 
   // Call celebrity lookalike API
@@ -229,9 +272,16 @@ export default function Dashboard() {
       console.log('🔄 Processing captured image...');
 
       const base64Data = await convertImageToBase64(capturedFile);
-      const matches = await findCelebLookalike(base64Data);
-      setCelebrityMatches(matches);
-      setCurrentMatchIndex(0);
+      
+      if (activeSection === 'celebrity') {
+        const matches = await findCelebLookalike(base64Data);
+        setCelebrityMatches(matches);
+        setCurrentMatchIndex(0);
+      } else if (activeSection === 'animal') {
+        const result = await findSpiritAnimal(base64Data);
+        setSpiritAnimalResult(result);
+      }
+      
       setUploadMode('results');
 
       console.log('✅ Webcam capture and processing completed!');
@@ -256,6 +306,13 @@ export default function Dashboard() {
   const handleSectionChange = (section: DashboardSection) => {
     setActiveSection(section);
     setSearchParams({ section });
+    // Reset state when changing sections to avoid showing old results
+    setUploadMode('upload');
+    setCelebrityMatches([]);
+    setSpiritAnimalResult(null);
+    setUploadedFile(null);
+    setCapturedImage(null);
+    setCurrentMatchIndex(0);
   };
 
   const handleNavigateMatch = (direction: 'prev' | 'next') => {
@@ -320,15 +377,20 @@ export default function Dashboard() {
         console.log('🔄 Step 1: Converting to base64...');
         const base64Data = await convertImageToBase64(uploadedFile);
 
-        console.log('🔄 Step 2: Calling Celebrity Match API...');
-        const matches = await findCelebLookalike(base64Data);
+        console.log(`🔄 Step 2: Calling API for section: ${activeSection}...`);
+        if (activeSection === 'celebrity') {
+          const matches = await findCelebLookalike(base64Data);
+          setCelebrityMatches(matches);
+          setCurrentMatchIndex(0);
+        } else if (activeSection === 'animal') {
+          const result = await findSpiritAnimal(base64Data);
+          setSpiritAnimalResult(result);
+        }
 
         console.log('🔄 Step 3: Processing results...');
-        setCelebrityMatches(matches);
-        setCurrentMatchIndex(0);
         setUploadMode('results');
 
-        console.log('✅ Celebrity match completed successfully!');
+        console.log('✅ Photo processing completed successfully!');
       } catch (error) {
         console.error('❌ Error processing image:', error);
         toast.error(error instanceof Error ? error.message : 'Failed to process image. Please try again.');
@@ -375,17 +437,79 @@ export default function Dashboard() {
     handleCapture();
   };
 
+  const renderAnimalSection = () => {
+    if (uploadMode === 'results' && spiritAnimalResult) {
+      return (
+        <div className="max-w-4xl mx-auto text-center">
+          <Card className="overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-cyan-200/50">
+            <CardContent className="p-0">
+              <div className="grid grid-cols-1 md:grid-cols-2">
+                {/* User's Photo Section (Left) */}
+                <div className="p-8 bg-gray-50 flex flex-col justify-center items-center">
+                  <img
+                    src={previewUrl || capturedImage || ''}
+                    alt={t('dashboard.result.yourPhoto')}
+                    className="w-64 h-64 rounded-full object-cover shadow-lg border-4 border-white"
+                  />
+                  <h3 className="mt-6 text-2xl font-bold text-gray-800">{t('dashboard.result.yourPhoto')}</h3>
+                </div>
+
+                {/* Spirit Animal Section (Right) */}
+                <div 
+                  className="p-12 text-white flex flex-col justify-center items-center relative bg-no-repeat bg-cover bg-center"
+                  style={{ backgroundImage: `url(${spiritAnimalResult.imageUrl})` }}
+                >
+                  {/* Overlay for text readability */}
+                  <div className="absolute inset-0 bg-black/50"></div>
+                  
+                  <div className="relative z-10 text-center">
+                    <Sparkles className="w-16 h-16 mb-4 opacity-80 mx-auto" />
+                    <h2 className="text-5xl font-extrabold tracking-tight">{spiritAnimalResult.animal}</h2>
+                    <p className="mt-4 text-lg text-gray-200 italic">"{spiritAnimalResult.reason}"</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <div className="mt-8">
+            <Button
+              onClick={() => {
+                setUploadMode('upload');
+                handleRemoveFile();
+                setSpiritAnimalResult(null);
+              }}
+              variant="outline"
+              size="lg"
+              className="bg-white"
+            >
+              <ChevronLeft className="w-5 h-5 mr-2" />
+              {t('dashboard.result.tryAnother')}
+            </Button>
+          </div>
+        </div>
+      );
+    }
+    
+    // Default to upload/webcam UI, which is identical to celebrity section for now
+    // We can reuse renderCelebritySection but change the text inside
+    // For simplicity, let's just reuse it directly and handle text via translation keys
+    // A better approach for the future would be to abstract the upload UI into its own component.
+    return renderCelebritySection();
+  }
+
   const renderCelebritySection = () => {
+    const isAnimalSection = activeSection === 'animal';
+
     if (uploadMode === 'upload') {
       return (
         <div className="max-w-4xl mx-auto">
           {/* Main Header */}
           <div className="text-center mb-8">
             <h2 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
-              {t('dashboard.celebrity.header')}
+              {isAnimalSection ? t('dashboard.animal.header') : t('dashboard.celebrity.header')}
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              {t('dashboard.celebrity.subheader')}
+              {isAnimalSection ? t('dashboard.animal.subheader') : t('dashboard.celebrity.subheader')}
             </p>
           </div>
 
@@ -496,7 +620,7 @@ export default function Dashboard() {
                 ) : (
                   <>
                     <Sparkles className="w-6 h-6 mr-3" />
-                    {t('dashboard.celebrity.findTwin')}
+                    {isAnimalSection ? t('dashboard.animal.findAnimal') : t('dashboard.celebrity.findTwin')}
                   </>
                 )}
               </Button>
@@ -668,17 +792,7 @@ export default function Dashboard() {
       case 'celebrity':
         return renderCelebritySection();
       case 'animal':
-        return (
-          <div className="max-w-4xl mx-auto text-center">
-            <Sparkles className="w-16 h-16 text-emerald-600 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('dashboard.animal.header')}</h2>
-            <p className="text-gray-600 mb-8">{t('dashboard.animal.subheader')}</p>
-            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
-              <Upload className="w-4 h-4 mr-2" />
-              {t('dashboard.animal.uploadButton')}
-            </Button>
-          </div>
-        );
+        return renderAnimalSection();
       case 'color':
         return (
           <div className="max-w-4xl mx-auto text-center">
